@@ -1,5 +1,5 @@
-import type { Friend, FriendBearingInfo } from "../types";
-import db from "./db";
+import type { Friend, FriendBearingInfo } from "@/types";
+import db from "@/lib/db";
 
 let data = [
   {
