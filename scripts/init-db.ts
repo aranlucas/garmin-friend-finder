@@ -14,8 +14,8 @@ async function initializeDatabase() {
         id TEXT PRIMARY KEY,
         name TEXT NOT NULL,
         short_name TEXT NOT NULL,
-        latitude REAL,
-        longitude REAL
+        latitude REAL NOT NULL,
+        longitude REAL NOT NULL
       )
     `);
 

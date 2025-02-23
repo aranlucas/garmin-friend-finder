@@ -39,7 +39,8 @@ export async function POST(request: Request) {
 
   const friends = await db.all<Friend[]>("SELECT * FROM friends");
 
-  const friendsWithBearing = friends.map((friend) => ({
+  const otherFriends = friends.filter((friend) => friend.id !== user.id);
+  const friendsWithBearing = otherFriends.map((friend) => ({
     ...friend,
     bearing: calculateBearing(
       user.latitude,
@@ -50,5 +51,5 @@ export async function POST(request: Request) {
     distance: 20,
   }));
 
-  return NextResponse.json(friendsWithBearing);
+  return NextResponse.json([user, ...friendsWithBearing]);
 }

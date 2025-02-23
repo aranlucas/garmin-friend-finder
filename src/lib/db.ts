@@ -13,17 +13,6 @@ async function initializeDb() {
     driver: sqlite3.Database,
   });
 
-  // Create friends table if it doesn't exist
-  await db.exec(`
-    CREATE TABLE IF NOT EXISTS friends (
-      id TEXT PRIMARY KEY,
-      name TEXT NOT NULL,
-      short_name TEXT NOT NULL,
-      latitude REAL NOT NULL,
-      longitude REAL NOT NULL
-    )
-  `);
-
   return db;
 }
 
