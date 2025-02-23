@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { Friend } from "@/types";
 import db from "@/lib/db";
-import { calculateBearing } from "@/lib/geo";
+import { calculateBearing, calculateDistance } from "@/lib/geo";
 
 export async function GET() {
   try {
@@ -48,7 +48,12 @@ export async function POST(request: Request) {
       friend.latitude,
       friend.longitude
     ),
-    distance: 20,
+    distance: calculateDistance(
+      user.latitude,
+      user.longitude,
+      friend.latitude,
+      friend.longitude
+    ),
   }));
 
   return NextResponse.json(friendsWithBearing);
