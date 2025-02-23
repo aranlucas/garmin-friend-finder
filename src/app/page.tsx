@@ -1,69 +1,61 @@
-import { MapWrapper } from "@/components/MapWrapper";
-import { Suspense } from "react";
-import { getFriendsWithLocations } from "@/services/friends";
-import { ErrorBoundary } from "react-error-boundary";
 import SignIn from "@/components/SignIn";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export default async function Home() {
-  const friends = await getFriendsWithLocations();
-
   return (
-    <main className="flex min-h-screen flex-col items-center p-8 gap-8">
-      <header className="w-full max-w-5xl flex justify-between items-center">
-        <h1 className="text-4xl font-bold">Friends Locations</h1>
-        <SignIn />
-      </header>
-
-      <section
-        className="w-full max-w-5xl"
-        aria-label="Map showing friend locations"
-      >
-        <div className="aspect-[21/9] rounded-lg overflow-hidden">
-          <ErrorBoundary
-            fallback={
-              <div className="w-full h-full bg-red-50 dark:bg-red-900/10 flex items-center justify-center text-red-500">
-                Error loading map
-              </div>
-            }
-          >
-            <Suspense
-              fallback={
-                <div className="w-full h-full animate-pulse bg-gray-200 dark:bg-gray-800" />
-              }
-            >
-              <MapWrapper friends={friends} />
-            </Suspense>
-          </ErrorBoundary>
-        </div>
-      </section>
-
-      <section className="w-full max-w-2xl" aria-label="Friends list">
-        <div className="grid gap-4">
-          {friends.map((friend) => (
-            <div
-              key={friend.id}
-              className="p-4 rounded-lg border border-gray-200 dark:border-gray-800"
-            >
-              <h2 className="text-xl font-semibold">{friend.short_name}</h2>
-              {friend.latitude && friend.longitude && (
-                <p className="text-gray-500 dark:text-gray-400">
-                  Location: {friend.latitude.toFixed(6)},{" "}
-                  {friend.longitude.toFixed(6)}
-                </p>
-              )}
-            </div>
-          ))}
-        </div>
-
-        {friends.length === 0 && (
-          <p className="text-center text-gray-500 dark:text-gray-400">
-            No friends found. Add some friends to get started!
+    <main className="min-h-screen">
+      <div className="container mx-auto px-4 py-16">
+        {/* Hero Section */}
+        <div className="flex flex-col items-center text-center mb-16">
+          <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-secondary to-accent bg-clip-text">
+            Mountain Safety Together
+          </h1>
+          <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mb-8">
+            Connect your Garmin device and share your location with trusted friends while exploring the mountains. Stay safe, stay connected.
           </p>
-        )}
-      </section>
+          <SignIn />
+        </div>
+
+        {/* Features Grid */}
+        <div className="grid md:grid-cols-3 gap-8 mb-16">
+          <div className="p-6 rounded-lg bg-card shadow-lg">
+            <h3 className="text-xl font-semibold mb-3">Real-Time Tracking</h3>
+            <p className="text-muted-foreground">See your friends locations in real-time through their Garmin devices, perfect for group adventures.</p>
+          </div>
+          <div className="p-6 rounded-lg bg-card shadow-lg">
+            <h3 className="text-xl font-semibold mb-3">Safety First</h3>
+            <p className="text-muted-foreground">Know exactly where your group members are during mountain activities, enhancing safety and coordination.</p>
+          </div>
+          <div className="p-6 rounded-lg bg-card shadow-lg">
+            <h3 className="text-xl font-semibold mb-3">Easy Setup</h3>
+            <p className="text-muted-foreground">Quick device registration and friend connections get you ready for your next adventure in minutes.</p>
+          </div>
+        </div>
+
+        {/* How It Works */}
+        <div className="text-center mb-16">
+          <h2 className="text-3xl font-bold mb-8">How It Works</h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="flex flex-col items-center">
+              <div className="w-12 h-12 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center mb-4">1</div>
+              <h3 className="text-xl font-semibold mb-2">Sign Up</h3>
+              <p className="text-muted-foreground">Create your account and sign in with your preferred method</p>
+            </div>
+            <div className="flex flex-col items-center">
+              <div className="w-12 h-12 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center mb-4">2</div>
+              <h3 className="text-xl font-semibold mb-2">Register Device</h3>
+              <p className="text-muted-foreground">Connect your Garmin device to start sharing your location</p>
+            </div>
+            <div className="flex flex-col items-center">
+              <div className="w-12 h-12 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center mb-4">3</div>
+              <h3 className="text-xl font-semibold mb-2">Add Friends</h3>
+              <p className="text-muted-foreground">Connect with your mountain buddies and start tracking</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </main>
   );
 }

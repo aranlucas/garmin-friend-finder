@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -33,36 +35,31 @@ export default function RegisterPage() {
 
         <div>
           <label className="block text-sm font-medium mb-2">Code</label>
-          <input
+          <Input
             type="text"
             value={formData.code}
             onChange={(e) =>
               setFormData((prev) => ({ ...prev, code: e.target.value }))
             }
-            className="w-full p-2 border rounded-lg"
             required
           />
         </div>
 
         <div>
           <label className="block text-sm font-medium mb-2">Short Name</label>
-          <input
+          <Input
             type="text"
             value={formData.shortName}
             onChange={(e) =>
               setFormData((prev) => ({ ...prev, shortName: e.target.value }))
             }
-            className="w-full p-2 border rounded-lg"
             required
           />
         </div>
 
-        <button
-          type="submit"
-          className="w-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-        >
+        <Button type="submit" className="w-full">
           Register
-        </button>
+        </Button>
       </form>
     </div>
   );
