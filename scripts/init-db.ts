@@ -1,7 +1,12 @@
-import db from "../src/lib/db";
-
+import sqlite3 from "sqlite3";
+import { Database, open } from "sqlite";
 async function initializeDatabase() {
   try {
+    const db = await open({
+      filename: "./friends.db",
+      driver: sqlite3.Database,
+    });
+
     // Create the friends table
     await db.run(`
       CREATE TABLE IF NOT EXISTS friends (
@@ -11,15 +16,6 @@ async function initializeDatabase() {
         latitude REAL,
         longitude REAL
       )
-    `);
-
-    // Insert some sample data
-    await db.run(`
-      INSERT OR REPLACE INTO friends (id, name, short_name, latitude, longitude)
-      VALUES 
-        ('1', 'John Doe', 'John', 40.7128, -74.0060),
-        ('2', 'Jane Smith', 'Jane', 34.0522, -118.2437),
-        ('3', 'Bob Johnson', 'Bob', 51.5074, -0.1278)
     `);
 
     console.log("Database initialized successfully");
