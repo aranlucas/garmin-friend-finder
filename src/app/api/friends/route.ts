@@ -51,5 +51,5 @@ export async function POST(request: Request) {
     distance: 20,
   }));
 
-  return NextResponse.json([user, ...friendsWithBearing]);
+  return NextResponse.json(friendsWithBearing);
 }
