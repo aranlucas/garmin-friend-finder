@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { calculateBearing, calculateDistance } from "@/lib/geo";
-import { getAllFriends, updateFriendLocation } from "@/services/friends";
+import {
+  getAllFriends,
+  getFriendsWithLocations,
+  updateFriendLocation,
+} from "@/services/friends";
 
 export async function GET() {
   try {
@@ -25,7 +29,7 @@ export async function POST(request: Request) {
   try {
     await updateFriendLocation(id.toString(), Number(lat), Number(lon));
 
-    const friends = await getAllFriends();
+    const friends = await getFriendsWithLocations();
     const otherFriends = friends.filter((friend) => friend.id !== id);
     const currentLocation = { latitude: Number(lat), longitude: Number(lon) };
 
