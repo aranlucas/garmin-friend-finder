@@ -29,7 +29,7 @@ export default async function Home() {
               key={friend.id}
               className="p-4 rounded-lg border border-gray-200 dark:border-gray-800"
             >
-              <h2 className="text-xl font-semibold">{friend.name}</h2>
+              <h2 className="text-xl font-semibold">{friend.short_name}</h2>
               {friend.latitude && friend.longitude && (
                 <p className="text-gray-500 dark:text-gray-400">
                   Location: {friend.latitude.toFixed(6)},{" "}
