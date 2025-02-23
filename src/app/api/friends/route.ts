@@ -1,16 +1,11 @@
 import { NextResponse } from "next/server";
-import { getInitials } from "@/lib/utils";
 import { calculateBearing, calculateDistance } from "@/lib/geo";
 import { getAllFriends, updateFriendLocation } from "@/services/friends";
 
 export async function GET() {
   try {
     const friends = await getAllFriends();
-    const friendsWithInitials = friends.map((friend) => ({
-      ...friend,
-      short_name: getInitials(friend.name),
-    }));
-    return NextResponse.json(friendsWithInitials);
+    return NextResponse.json(friends);
   } catch (error) {
     console.error("Database error:", error);
     return NextResponse.json({ error: "database error" }, { status: 500 });
@@ -36,7 +31,6 @@ export async function POST(request: Request) {
 
     const friendsWithBearing = otherFriends.map((friend) => ({
       ...friend,
-      short_name: getInitials(friend.name),
       bearing: calculateBearing(
         currentLocation.latitude,
         currentLocation.longitude,

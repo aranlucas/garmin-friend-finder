@@ -12,7 +12,7 @@ async function initializeDatabase() {
     await db.run(`
       CREATE TABLE IF NOT EXISTS users (
         id TEXT PRIMARY KEY,
-        name TEXT NOT NULL
+        short_name TEXT NOT NULL
       )
     `);
 
@@ -31,9 +31,9 @@ async function initializeDatabase() {
     try {
       // Sample users
       await db.run(
-        `INSERT OR REPLACE INTO users (id, name) VALUES 
-         ('006-B3906-00', 'Lucas Arango'),
-         ('006-B4314-00', 'Case Wright')`
+        `INSERT OR REPLACE INTO users (id, short_name) VALUES 
+         ('006-B3906-00', 'LA'),
+         ('006-B4314-00', 'CW')`
       );
 
       await db.run("COMMIT");

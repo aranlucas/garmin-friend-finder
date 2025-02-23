@@ -1,23 +1,12 @@
-import db from "@/lib/db";
 import { MapWrapper } from "./components/MapWrapper";
-import { type Friend } from "@/types";
 import { Suspense } from "react";
-import { getInitials } from "@/lib/utils";
 import { getFriendsWithLocations } from "@/services/friends";
-
-async function getFriends(): Promise<Friend[]> {
-  const friends = await getFriendsWithLocations();
-  return friends.map((friend) => ({
-    ...friend,
-    short_name: getInitials(friend.name),
-  }));
-}
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export default async function Home() {
-  const friends = await getFriends();
+  const friends = await getFriendsWithLocations();
 
   return (
     <main className="flex min-h-screen flex-col items-center p-8">

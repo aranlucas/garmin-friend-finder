@@ -1,13 +1,11 @@
 import db from "@/lib/db";
 import type { Friend } from "@/types";
 
-type RawFriend = Omit<Friend, "short_name">;
-
-export async function getAllFriends(): Promise<RawFriend[]> {
-  return db.all<RawFriend[]>(`
+export async function getAllFriends(): Promise<Friend[]> {
+  return db.all<Friend[]>(`
     SELECT 
       u.id,
-      u.name,
+      u.short_name,
       l.latitude,
       l.longitude
     FROM users u
@@ -15,11 +13,11 @@ export async function getAllFriends(): Promise<RawFriend[]> {
   `);
 }
 
-export async function getFriendsWithLocations(): Promise<RawFriend[]> {
-  return db.all<RawFriend[]>(`
+export async function getFriendsWithLocations(): Promise<Friend[]> {
+  return db.all<Friend[]>(`
     SELECT 
       u.id,
-      u.name,
+      u.short_name,
       l.latitude,
       l.longitude
     FROM locations l

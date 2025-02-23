@@ -1,7 +1,7 @@
 "use client";
 
+import type { Friend } from "@/types";
 import dynamic from "next/dynamic";
-import { type Friend } from "@/types";
 
 const FriendsMap = dynamic(() => import("./FriendsMap"), {
   ssr: false,
