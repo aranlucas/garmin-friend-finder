@@ -1,10 +1,16 @@
 import { NextResponse } from "next/server";
 import type { Friend } from "@/types";
 import db from "@/lib/db";
+import { calculateBearing } from "@/lib/geo";
 
 export async function GET() {
-  const friends = await db.all<Friend[]>("SELECT * FROM friends");
-  return NextResponse.json(friends);
+  try {
+    const friends = await db.all<Friend[]>("SELECT * FROM friends");
+    return NextResponse.json(friends);
+  } catch (error) {
+    console.error("Database error:", error);
+    return NextResponse.json({ error: "database error" }, { status: 500 });
+  }
 }
 
 export async function POST(request: Request) {
@@ -30,5 +36,15 @@ export async function POST(request: Request) {
   );
 
   const friends = await db.all<Friend[]>("SELECT * FROM friends");
-  return NextResponse.json(friends);
+  const friendsWithBearing = friends.map((friend) => ({
+    ...friend,
+    bearing: calculateBearing(
+      user.latitude,
+      user.longitude,
+      friend.latitude,
+      friend.longitude
+    ),
+  }));
+
+  return NextResponse.json(friendsWithBearing);
 }

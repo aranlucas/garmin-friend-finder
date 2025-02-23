@@ -1,53 +1,37 @@
 import sqlite3 from "sqlite3";
-import { Database } from "sqlite3";
+import { Database, open } from "sqlite";
 
-class SQLiteDB {
-  private db: Database;
+let db: Database | null = null;
 
-  constructor() {
-    this.db = new sqlite3.Database("./friends.db");
-    this.initialize();
+async function initializeDb() {
+  if (db) {
+    return db;
   }
 
-  private initialize() {
-    this.db.run(`
-      CREATE TABLE IF NOT EXISTS friends (
-        id TEXT PRIMARY KEY,
-        name TEXT NOT NULL,
-        short_name TEXT NOT NULL,
-        latitude REAL,
-        longitude REAL
-      )
-    `);
-  }
+  db = await open({
+    filename: "./friends.db",
+    driver: sqlite3.Database,
+  });
 
-  async get<T>(query: string, params: any[] = []): Promise<T> {
-    return new Promise((resolve, reject) => {
-      this.db.get(query, params, (err, row) => {
-        if (err) reject(err);
-        resolve(row as T);
-      });
-    });
-  }
+  // Create friends table if it doesn't exist
+  await db.exec(`
+    CREATE TABLE IF NOT EXISTS friends (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      short_name TEXT NOT NULL,
+      latitude REAL NOT NULL,
+      longitude REAL NOT NULL
+    )
+  `);
 
-  async all<T>(query: string, params: any[] = []): Promise<T[]> {
-    return new Promise((resolve, reject) => {
-      this.db.all(query, params, (err, rows) => {
-        if (err) reject(err);
-        resolve(rows as T[]);
-      });
-    });
-  }
-
-  async run(query: string, params: any[] = []): Promise<void> {
-    return new Promise((resolve, reject) => {
-      this.db.run(query, params, (err) => {
-        if (err) reject(err);
-        resolve();
-      });
-    });
-  }
+  return db;
 }
 
-const db = new SQLiteDB();
-export default db;
+// Initialize the database
+const database = await initializeDb();
+
+if (!database) {
+  throw new Error("Failed to initialize database");
+}
+
+export default database;
