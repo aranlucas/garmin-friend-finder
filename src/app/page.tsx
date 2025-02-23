@@ -1,4 +1,4 @@
-import { MapWrapper } from "./components/MapWrapper";
+import { MapWrapper } from "@/components/MapWrapper";
 import { Suspense } from "react";
 import { getFriendsWithLocations } from "@/services/friends";
 import Link from "next/link";
