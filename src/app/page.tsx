@@ -1,8 +1,8 @@
 import { MapWrapper } from "@/components/MapWrapper";
 import { Suspense } from "react";
 import { getFriendsWithLocations } from "@/services/friends";
-import Link from "next/link";
 import { ErrorBoundary } from "react-error-boundary";
+import SignIn from "@/components/SignIn";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -14,12 +14,7 @@ export default async function Home() {
     <main className="flex min-h-screen flex-col items-center p-8 gap-8">
       <header className="w-full max-w-5xl flex justify-between items-center">
         <h1 className="text-4xl font-bold">Friends Locations</h1>
-        <Link
-          href="/account/register"
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-        >
-          Register
-        </Link>
+        <SignIn />
       </header>
 
       <section
