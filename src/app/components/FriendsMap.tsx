@@ -2,7 +2,7 @@
 
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import { icon } from "leaflet";
+import { icon, latLngBounds, LatLngBounds } from "leaflet";
 
 // Fix for default marker icon in Leaflet
 const FriendIcon = icon({
@@ -31,21 +31,23 @@ export default function FriendsMap({ friends }: FriendsMapProps) {
     );
   }
 
-  // Calculate center point from all friends
-  const center = friends.reduce(
-    (acc, friend) => {
-      return {
-        lat: acc.lat + friend.latitude / friends.length,
-        lng: acc.lng + friend.longitude / friends.length,
-      };
-    },
-    { lat: 0, lng: 0 }
-  );
+  // Calculate bounds from all friends
+  const bounds = friends.reduce((acc: LatLngBounds | null, friend) => {
+    const latLng = [friend.latitude, friend.longitude] as [number, number];
+    if (!acc) {
+      return latLngBounds([latLng]);
+    }
+    return acc.extend(latLng);
+  }, null);
+
+  // Add padding to bounds
+  const paddedBounds = bounds?.pad(0.2);
 
   return (
     <MapContainer
-      center={[center.lat, center.lng]}
-      zoom={4}
+      bounds={paddedBounds || undefined}
+      zoom={paddedBounds ? undefined : 4}
+      center={paddedBounds ? undefined : [0, 0]}
       className="h-[400px] rounded-lg z-0"
     >
       <TileLayer
