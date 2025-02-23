@@ -1,11 +1,15 @@
 import db from "@/lib/db";
 import { MapWrapper } from "./components/MapWrapper";
 import { type Friend } from "@/types";
+import { Suspense } from "react";
 
 async function getFriends(): Promise<Friend[]> {
   const friends = await db.all<Friend[]>("SELECT * FROM friends ORDER BY name");
   return friends;
 }
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export default async function Home() {
   const friends = await getFriends();
@@ -15,7 +19,13 @@ export default async function Home() {
       <h1 className="text-4xl font-bold mb-8">Friends Locations</h1>
 
       <div className="w-full max-w-5xl mb-8">
-        <MapWrapper friends={friends} />
+        <Suspense
+          fallback={
+            <div className="w-full h-[400px] animate-pulse bg-gray-200 dark:bg-gray-800 rounded-lg" />
+          }
+        >
+          <MapWrapper friends={friends} />
+        </Suspense>
       </div>
 
       <div className="w-full max-w-2xl">
