@@ -43,11 +43,13 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className="relative min-h-svh">
-            <header className="absolute right-4 top-4">
+          <div className="min-h-svh flex flex-col">
+            <header className="p-4 flex justify-end">
               <ModeToggle />
             </header>
-            {children}
+            <main className="flex-1">
+              {children}
+            </main>
           </div>
         </ThemeProvider>
       </body>
