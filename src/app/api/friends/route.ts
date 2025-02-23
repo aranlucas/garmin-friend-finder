@@ -47,6 +47,7 @@ export async function POST(request: Request) {
       friend.latitude,
       friend.longitude
     ),
+    distance: 20,
   }));
 
   return NextResponse.json(friendsWithBearing);
