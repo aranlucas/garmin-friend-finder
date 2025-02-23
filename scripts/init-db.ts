@@ -26,6 +26,16 @@ async function initializeDatabase() {
       )
     `);
 
+    // Create the verification codes table
+    await db.run(`
+      CREATE TABLE IF NOT EXISTS verification_codes (
+        code TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id)
+      )
+    `);
+
     // Insert sample data
     await db.run("BEGIN TRANSACTION");
     try {
