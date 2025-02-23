@@ -3,10 +3,9 @@
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { icon } from "leaflet";
-import { useEffect } from "react";
 
 // Fix for default marker icon in Leaflet
-const ICON = icon({
+const FriendIcon = icon({
   iconUrl: "/friend-marker.svg",
   iconSize: [25, 41],
   iconAnchor: [12, 41],
@@ -57,7 +56,7 @@ export default function FriendsMap({ friends }: FriendsMapProps) {
         <Marker
           key={friend.id}
           position={[friend.latitude, friend.longitude]}
-          icon={ICON}
+          icon={FriendIcon}
         >
           <Popup>
             <div className="text-sm">

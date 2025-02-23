@@ -1,5 +1,6 @@
 import sqlite3 from "sqlite3";
 import { Database, open } from "sqlite";
+
 async function initializeDatabase() {
   try {
     const db = await open({

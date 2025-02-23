@@ -1,6 +1,6 @@
 import db from "@/lib/db";
 import { MapWrapper } from "./components/MapWrapper";
-import { type Friend } from "./types";
+import { type Friend } from "@/types";
 
 async function getFriends(): Promise<Friend[]> {
   const friends = await db.all<Friend[]>("SELECT * FROM friends ORDER BY name");
