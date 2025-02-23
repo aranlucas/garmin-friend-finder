@@ -14,17 +14,19 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const body = await request.json();
-  const { lat, lon, id } = body;
+  const formData = await request.formData();
+  const lat = formData.get("lat");
+  const lon = formData.get("lon");
+  const id = formData.get("id");
 
   if (!lat || !lon || !id) {
     return NextResponse.json({ error: "bad request" }, { status: 400 });
   }
 
   const user: Friend = {
-    id,
-    name: id,
-    short_name: id,
+    id: id.toString(),
+    name: id.toString(),
+    short_name: id.toString(),
     latitude: Number(lat),
     longitude: Number(lon),
   };
@@ -36,6 +38,7 @@ export async function POST(request: Request) {
   );
 
   const friends = await db.all<Friend[]>("SELECT * FROM friends");
+
   const friendsWithBearing = friends.map((friend) => ({
     ...friend,
     bearing: calculateBearing(
