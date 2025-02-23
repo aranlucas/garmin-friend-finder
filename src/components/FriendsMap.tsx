@@ -2,64 +2,70 @@
 
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import { icon, latLngBounds, LatLngBounds } from "leaflet";
+import { icon, latLngBounds, LatLngBounds, LatLngTuple } from "leaflet";
 import type { Friend } from "@/types";
+import { ErrorBoundary } from "react-error-boundary";
 
-// Fix for default marker icon in Leaflet
-const FriendIcon = icon({
+const MAP_CONFIG = {
+  SEATTLE: {
+    position: [47.6062, -122.3321] as LatLngTuple,
+    zoom: 12,
+  },
+  BOUNDS_PADDING: 0.2,
+  ATTRIBUTION:
+    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  TILE_URL: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+} as const;
+
+const FRIEND_ICON = icon({
   iconUrl: "/friend-marker.svg",
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
 });
 
-type FriendsMapProps = {
-  friends: Friend[];
-};
+function calculateBounds(friends: Friend[]): LatLngBounds | null {
+  if (friends.length === 0) return null;
 
-export default function FriendsMap({ friends }: FriendsMapProps) {
-  if (friends.length === 0) {
-    return (
-      <div className="h-[400px] bg-gray-100 rounded-lg flex items-center justify-center">
-        No locations to display
-      </div>
-    );
-  }
+  const coordinates = friends.map(
+    (friend): LatLngTuple => [friend.latitude, friend.longitude]
+  );
+  return latLngBounds(coordinates).pad(MAP_CONFIG.BOUNDS_PADDING);
+}
 
-  // Calculate bounds from all friends
-  const bounds = friends.reduce((acc: LatLngBounds | null, friend) => {
-    const latLng = [friend.latitude, friend.longitude] as [number, number];
-    if (!acc) {
-      return latLngBounds([latLng]);
-    }
-    return acc.extend(latLng);
-  }, null);
+function FallbackComponent() {
+  return (
+    <div className="w-full h-full bg-gray-100 rounded-lg flex items-center justify-center text-gray-600">
+      Error loading map
+    </div>
+  );
+}
 
-  // Add padding to bounds
-  const paddedBounds = bounds?.pad(0.2);
+export default function FriendsMap({ friends }: { friends: Friend[] }) {
+  const bounds = calculateBounds(friends);
 
   return (
-    <MapContainer
-      bounds={paddedBounds || undefined}
-      zoom={paddedBounds ? undefined : 4}
-      center={paddedBounds ? undefined : [0, 0]}
-      className="h-[400px] rounded-lg z-0"
-    >
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
-      {friends.map((friend) => (
-        <Marker
-          key={friend.id}
-          position={[friend.latitude, friend.longitude]}
-          icon={FriendIcon}
-        >
-          <Popup>
-            <div className="text-sm">{friend.short_name}</div>
-          </Popup>
-        </Marker>
-      ))}
-    </MapContainer>
+    <ErrorBoundary FallbackComponent={FallbackComponent}>
+      <MapContainer
+        bounds={bounds || undefined}
+        zoom={bounds ? undefined : MAP_CONFIG.SEATTLE.zoom}
+        center={bounds ? undefined : MAP_CONFIG.SEATTLE.position}
+        className="w-full h-full rounded-lg z-0"
+      >
+        <TileLayer
+          attribution={MAP_CONFIG.ATTRIBUTION}
+          url={MAP_CONFIG.TILE_URL}
+        />
+        {friends.map((friend) => (
+          <Marker
+            key={friend.id}
+            position={[friend.latitude, friend.longitude]}
+            icon={FRIEND_ICON}
+          >
+            <Popup className="text-sm font-medium">{friend.short_name}</Popup>
+          </Marker>
+        ))}
+      </MapContainer>
+    </ErrorBoundary>
   );
 }
