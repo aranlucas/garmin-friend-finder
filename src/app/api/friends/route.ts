@@ -1,12 +1,16 @@
 import { NextResponse } from "next/server";
-import type { Friend } from "@/types";
-import db from "@/lib/db";
+import { getInitials } from "@/lib/utils";
 import { calculateBearing, calculateDistance } from "@/lib/geo";
+import { getAllFriends, updateFriendLocation } from "@/services/friends";
 
 export async function GET() {
   try {
-    const friends = await db.all<Friend[]>("SELECT * FROM friends");
-    return NextResponse.json(friends);
+    const friends = await getAllFriends();
+    const friendsWithInitials = friends.map((friend) => ({
+      ...friend,
+      short_name: getInitials(friend.name),
+    }));
+    return NextResponse.json(friendsWithInitials);
   } catch (error) {
     console.error("Database error:", error);
     return NextResponse.json({ error: "database error" }, { status: 500 });
@@ -23,38 +27,33 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "bad request" }, { status: 400 });
   }
 
-  const user: Friend = {
-    id: id.toString(),
-    name: id.toString(),
-    short_name: id.toString(),
-    latitude: Number(lat),
-    longitude: Number(lon),
-  };
+  try {
+    await updateFriendLocation(id.toString(), Number(lat), Number(lon));
 
-  await db.run(
-    `INSERT OR REPLACE INTO friends (id, name, short_name, latitude, longitude) 
-     VALUES (?, ?, ?, ?, ?)`,
-    [user.id, user.name, user.short_name, user.latitude, user.longitude]
-  );
+    const friends = await getAllFriends();
+    const otherFriends = friends.filter((friend) => friend.id !== id);
+    const currentLocation = { latitude: Number(lat), longitude: Number(lon) };
 
-  const friends = await db.all<Friend[]>("SELECT * FROM friends");
+    const friendsWithBearing = otherFriends.map((friend) => ({
+      ...friend,
+      short_name: getInitials(friend.name),
+      bearing: calculateBearing(
+        currentLocation.latitude,
+        currentLocation.longitude,
+        friend.latitude!,
+        friend.longitude!
+      ),
+      distance: calculateDistance(
+        currentLocation.latitude,
+        currentLocation.longitude,
+        friend.latitude!,
+        friend.longitude!
+      ),
+    }));
 
-  const otherFriends = friends.filter((friend) => friend.id !== user.id);
-  const friendsWithBearing = otherFriends.map((friend) => ({
-    ...friend,
-    bearing: calculateBearing(
-      user.latitude,
-      user.longitude,
-      friend.latitude,
-      friend.longitude
-    ),
-    distance: calculateDistance(
-      user.latitude,
-      user.longitude,
-      friend.latitude,
-      friend.longitude
-    ),
-  }));
-
-  return NextResponse.json(friendsWithBearing);
+    return NextResponse.json(friendsWithBearing);
+  } catch (error) {
+    console.error("Database error:", error);
+    return NextResponse.json({ error: "database error" }, { status: 500 });
+  }
 }

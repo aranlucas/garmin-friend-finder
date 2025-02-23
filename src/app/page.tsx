@@ -2,10 +2,15 @@ import db from "@/lib/db";
 import { MapWrapper } from "./components/MapWrapper";
 import { type Friend } from "@/types";
 import { Suspense } from "react";
+import { getInitials } from "@/lib/utils";
+import { getFriendsWithLocations } from "@/services/friends";
 
 async function getFriends(): Promise<Friend[]> {
-  const friends = await db.all<Friend[]>("SELECT * FROM friends ORDER BY name");
-  return friends;
+  const friends = await getFriendsWithLocations();
+  return friends.map((friend) => ({
+    ...friend,
+    short_name: getInitials(friend.name),
+  }));
 }
 
 export const dynamic = "force-dynamic";
@@ -36,10 +41,12 @@ export default async function Home() {
               className="p-4 rounded-lg border border-gray-200 dark:border-gray-800"
             >
               <h2 className="text-xl font-semibold">{friend.name}</h2>
-              <p className="text-gray-500 dark:text-gray-400">
-                {friend.short_name} - Location: {friend.latitude.toFixed(6)},{" "}
-                {friend.longitude.toFixed(6)}
-              </p>
+              {friend.latitude && friend.longitude && (
+                <p className="text-gray-500 dark:text-gray-400">
+                  Location: {friend.latitude.toFixed(6)},{" "}
+                  {friend.longitude.toFixed(6)}
+                </p>
+              )}
             </div>
           ))}
         </div>

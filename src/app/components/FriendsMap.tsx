@@ -3,6 +3,7 @@
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { icon, latLngBounds, LatLngBounds } from "leaflet";
+import { Friend } from "@/types";
 
 // Fix for default marker icon in Leaflet
 const FriendIcon = icon({
@@ -13,13 +14,7 @@ const FriendIcon = icon({
 });
 
 type FriendsMapProps = {
-  friends: Array<{
-    id: string;
-    name: string;
-    short_name: string;
-    latitude: number;
-    longitude: number;
-  }>;
+  friends: Friend[];
 };
 
 export default function FriendsMap({ friends }: FriendsMapProps) {
