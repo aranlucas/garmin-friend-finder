@@ -1,6 +1,7 @@
 import { MapWrapper } from "./components/MapWrapper";
 import { Suspense } from "react";
 import { getFriendsWithLocations } from "@/services/friends";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -10,7 +11,15 @@ export default async function Home() {
 
   return (
     <main className="flex min-h-screen flex-col items-center p-8">
-      <h1 className="text-4xl font-bold mb-8">Friends Locations</h1>
+      <div className="w-full max-w-5xl flex justify-between items-center mb-8">
+        <h1 className="text-4xl font-bold">Friends Locations</h1>
+        <Link
+          href="/account/register"
+          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+        >
+          Register
+        </Link>
+      </div>
 
       <div className="w-full max-w-5xl mb-8">
         <Suspense
