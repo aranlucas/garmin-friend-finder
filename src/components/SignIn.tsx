@@ -8,14 +8,12 @@ export default async function SignIn() {
   if (session) {
     return (
       <div className="flex flex-col items-center gap-4">
-        <div className="text-muted-foreground">Signed in as {session.user?.name}</div>
+        <div className="text-muted-foreground">
+          Signed in as {session.user?.name}
+        </div>
         <div className="flex gap-4">
           <Button asChild>
-            <Link
-              href="/dashboard"
-            >
-              View Map
-            </Link>
+            <Link href="/dashboard">View Map</Link>
           </Button>
           <Button asChild>
             <Link

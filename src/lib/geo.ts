@@ -2,7 +2,7 @@ export function calculateBearing(
   lat1: number,
   lon1: number,
   lat2: number,
-  lon2: number
+  lon2: number,
 ): number {
   const startLat = (lat1 * Math.PI) / 180;
   const startLng = (lon1 * Math.PI) / 180;
@@ -24,7 +24,7 @@ export function calculateDistance(
   lat1: number,
   lon1: number,
   lat2: number,
-  lon2: number
+  lon2: number,
 ): number {
   const R = 20902231; // Earth's radius in feet (6371 km * 3280.84 feet/km)
   const dLat = ((lat2 - lat1) * Math.PI) / 180;

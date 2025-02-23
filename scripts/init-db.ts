@@ -42,7 +42,7 @@ async function initializeDatabase() {
       // Sample users
       await db.run(
         `INSERT OR REPLACE INTO users (id, short_name) VALUES 
-         ('006-B4314-00', 'LA')`
+         ('006-B4314-00', 'LA')`,
       );
 
       await db.run("COMMIT");

@@ -11,7 +11,7 @@ export async function POST(request: Request) {
       // First verify the code exists and get the associated user_id
       const verificationResult = await db.get(
         "SELECT * FROM verification_codes WHERE code = ?",
-        [code]
+        [code],
       );
 
       console.log("verificationResult", verificationResult);
@@ -20,14 +20,14 @@ export async function POST(request: Request) {
         await db.run("ROLLBACK");
         return NextResponse.json(
           { error: "Invalid verification code" },
-          { status: 404 }
+          { status: 404 },
         );
       }
 
       // Create a new user
       const updateResult = await db.run(
         "INSERT INTO users (id, short_name) VALUES (?, ?)",
-        [verificationResult.user_id, shortName]
+        [verificationResult.user_id, shortName],
       );
 
       if (updateResult.changes === 0) {
@@ -42,7 +42,7 @@ export async function POST(request: Request) {
 
       const user = await db.get(
         "SELECT id, short_name FROM users WHERE id = ?",
-        [verificationResult.user_id]
+        [verificationResult.user_id],
       );
 
       return NextResponse.json(user);

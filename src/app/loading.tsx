@@ -12,7 +12,10 @@ export default function Loading() {
         {/* Features Grid */}
         <div className="grid md:grid-cols-3 gap-8 mb-16">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="p-6 rounded-lg bg-card shadow-lg animate-pulse">
+            <div
+              key={i}
+              className="p-6 rounded-lg bg-card shadow-lg animate-pulse"
+            >
               <div className="h-6 w-32 bg-gray-200 dark:bg-gray-800 rounded mb-3"></div>
               <div className="h-20 w-full bg-gray-200 dark:bg-gray-800 rounded"></div>
             </div>

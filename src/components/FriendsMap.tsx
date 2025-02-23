@@ -28,7 +28,7 @@ function calculateBounds(friends: Friend[]): LatLngBounds | null {
   if (friends.length === 0) return null;
 
   const coordinates = friends.map(
-    (friend): LatLngTuple => [friend.latitude, friend.longitude]
+    (friend): LatLngTuple => [friend.latitude, friend.longitude],
   );
   return latLngBounds(coordinates).pad(MAP_CONFIG.BOUNDS_PADDING);
 }

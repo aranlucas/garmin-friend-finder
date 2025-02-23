@@ -55,7 +55,8 @@ export default async function DashboardPage() {
               <h2 className="text-xl font-semibold">{friend.short_name}</h2>
               {friend.latitude && friend.longitude && (
                 <p className="text-muted-foreground">
-                  Location: {friend.latitude.toFixed(6)}, {friend.longitude.toFixed(6)}
+                  Location: {friend.latitude.toFixed(6)},{" "}
+                  {friend.longitude.toFixed(6)}
                 </p>
               )}
             </div>

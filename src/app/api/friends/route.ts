@@ -39,13 +39,13 @@ export async function POST(request: Request) {
         currentLocation.latitude,
         currentLocation.longitude,
         friend.latitude!,
-        friend.longitude!
+        friend.longitude!,
       ),
       distance: calculateDistance(
         currentLocation.latitude,
         currentLocation.longitude,
         friend.latitude!,
-        friend.longitude!
+        friend.longitude!,
       ),
     }));
 
