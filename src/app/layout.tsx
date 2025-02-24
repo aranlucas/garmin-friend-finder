@@ -1,7 +1,7 @@
 import "./globals.css";
 import type { Metadata, Viewport } from "next";
 import { ThemeProvider } from "@/components/theme-provider";
-import { ModeToggle } from "@/components/ModeToggle";
+import { MainNav } from "@/components/MainNav";
 
 const META_THEME_COLORS = {
   light: "#ffffff",
@@ -36,7 +36,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-svh bg-background">
+      <body className="bg-background">
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
@@ -44,12 +44,12 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <div className="min-h-svh flex flex-col">
-            <header className="p-4 flex justify-end">
-              <ModeToggle />
+            <header className="border-b">
+              <div className="container mx-auto px-4 h-12">
+                <MainNav />
+              </div>
             </header>
-            <main className="flex-1">
-              {children}
-            </main>
+            <main className="flex-1">{children}</main>
           </div>
         </ThemeProvider>
       </body>
