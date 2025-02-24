@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "lint-fix": "next lint --fix",
+    "lint:fix": "next lint --fix",
     "init-db": "npx tsx scripts/init-db.ts",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
@@ -46,6 +46,8 @@
     "autoprefixer": "^10.4.20",
     "eslint": "^9.21.0",
     "eslint-config-next": "15.1.7",
+    "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-prettier": "^5.2.3",
     "postcss": "^8.5.3",
     "prettier": "^3.5.2",
     "tailwindcss": "^4.0.8",

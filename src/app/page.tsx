@@ -5,37 +5,39 @@ export const revalidate = 0;
 
 export default async function Home() {
   return (
-    <main className="min-h-screen">
-      <div className="container mx-auto px-4 py-16">
+    <main className="min-h-screen bg-gradient-to-b from-background via-background to-secondary/20 relative">
+      <div className="container relative mx-auto px-4 py-16 z-10">
         {/* Hero Section */}
-        <div className="flex flex-col items-center text-center mb-16">
-          <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-secondary to-accent bg-clip-text">
+        <div className="flex flex-col items-center text-center mb-24">
+          <h1 className="text-5xl md:text-6xl font-bold mb-6">
             Mountain Safety Together
           </h1>
-          <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mb-8">
+          <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mb-8 drop-shadow-sm">
             Connect your Garmin device and share your location with trusted
             friends while exploring the mountains. Stay safe, stay connected.
           </p>
-          <SignIn />
+          <div className="backdrop-blur-sm bg-background/80 p-4 rounded-lg">
+            <SignIn />
+          </div>
         </div>
 
         {/* Features Grid */}
-        <div className="grid md:grid-cols-3 gap-8 mb-16">
-          <div className="p-6 rounded-lg bg-card shadow-lg">
+        <div className="grid md:grid-cols-3 gap-8 mb-24">
+          <div className="p-6 rounded-lg bg-card/80 backdrop-blur-sm shadow-lg border hover:shadow-xl transition-shadow">
             <h3 className="text-xl font-semibold mb-3">Real-Time Tracking</h3>
             <p className="text-muted-foreground">
               See your friends locations in real-time through their Garmin
               devices, perfect for group adventures.
             </p>
           </div>
-          <div className="p-6 rounded-lg bg-card shadow-lg">
+          <div className="p-6 rounded-lg bg-card/80 backdrop-blur-sm shadow-lg border hover:shadow-xl transition-shadow">
             <h3 className="text-xl font-semibold mb-3">Safety First</h3>
             <p className="text-muted-foreground">
               Know exactly where your group members are during mountain
               activities, enhancing safety and coordination.
             </p>
           </div>
-          <div className="p-6 rounded-lg bg-card shadow-lg">
+          <div className="p-6 rounded-lg bg-card/80 backdrop-blur-sm shadow-lg border hover:shadow-xl transition-shadow">
             <h3 className="text-xl font-semibold mb-3">Easy Setup</h3>
             <p className="text-muted-foreground">
               Quick device registration and friend connections get you ready for
