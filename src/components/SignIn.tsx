@@ -1,11 +1,9 @@
-"use client";
-
 import Link from "next/link";
-import { useSession, signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
+import { auth } from "@/auth";
 
-export default function SignIn() {
-  const { data: session } = useSession();
+export default async function SignIn() {
+  const session = await auth();
 
   if (session) {
     return (
@@ -18,5 +16,9 @@ export default function SignIn() {
       </div>
     );
   }
-  return <Button onClick={() => signIn()}>Get started</Button>;
+  return (
+    <Button asChild>
+      <Link href="/api/auth/signin">Get started</Link>
+    </Button>
+  );
 }

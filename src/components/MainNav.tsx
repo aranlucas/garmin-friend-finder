@@ -20,7 +20,7 @@ import { Button } from "./ui/button";
 import { User } from "lucide-react";
 
 export function MainNav() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
   return (
     <div className="flex items-center justify-between w-full mt-2">
@@ -44,7 +44,7 @@ export function MainNav() {
       </NavigationMenu>
       <div className="flex items-center space-x-2">
         <ModeToggle />
-        {session?.user && (
+        {status === "authenticated" ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon">
@@ -56,10 +56,10 @@ export function MainNav() {
               <DropdownMenuItem className="font-normal">
                 <div className="flex flex-col space-y-1">
                   <p className="text-sm font-medium leading-none">
-                    {session.user.name}
+                    {session.user?.name}
                   </p>
                   <p className="text-xs leading-none text-muted-foreground">
-                    {session.user.email}
+                    {session.user?.email}
                   </p>
                 </div>
               </DropdownMenuItem>
@@ -68,6 +68,13 @@ export function MainNav() {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+        ) : (
+          <Link href="/api/auth/signin">
+            <Button variant="ghost" size="icon">
+              <User className="h-5 w-5" />
+              <span className="sr-only">Sign in</span>
+            </Button>
+          </Link>
         )}
       </div>
     </div>
