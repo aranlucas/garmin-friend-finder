@@ -10,7 +10,8 @@
     "lint:fix": "next lint --fix",
     "init-db": "npx tsx scripts/init-db.ts",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.6",
