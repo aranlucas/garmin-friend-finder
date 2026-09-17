@@ -27,9 +27,7 @@ const FRIEND_ICON = icon({
 function calculateBounds(friends: Friend[]): LatLngBounds | null {
   if (friends.length === 0) return null;
 
-  const coordinates = friends.map(
-    (friend): LatLngTuple => [friend.latitude, friend.longitude],
-  );
+  const coordinates = friends.map((friend): LatLngTuple => [friend.latitude, friend.longitude]);
   return latLngBounds(coordinates).pad(MAP_CONFIG.BOUNDS_PADDING);
 }
 
@@ -52,16 +50,9 @@ export default function FriendsMap({ friends }: { friends: Friend[] }) {
         center={bounds ? undefined : MAP_CONFIG.SEATTLE.position}
         className="w-full h-full rounded-lg z-0"
       >
-        <TileLayer
-          attribution={MAP_CONFIG.ATTRIBUTION}
-          url={MAP_CONFIG.TILE_URL}
-        />
+        <TileLayer attribution={MAP_CONFIG.ATTRIBUTION} url={MAP_CONFIG.TILE_URL} />
         {friends.map((friend) => (
-          <Marker
-            key={friend.id}
-            position={[friend.latitude, friend.longitude]}
-            icon={FRIEND_ICON}
-          >
+          <Marker key={friend.id} position={[friend.latitude, friend.longitude]} icon={FRIEND_ICON}>
             <Popup className="text-sm font-medium">{friend.short_name}</Popup>
           </Marker>
         ))}

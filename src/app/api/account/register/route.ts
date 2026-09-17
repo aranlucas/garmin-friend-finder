@@ -1,34 +1,31 @@
 import { NextResponse } from "next/server";
-import db from "@/lib/db";
+import { getDb } from "@/lib/db";
 
 export async function POST(request: Request) {
   try {
     const { code, shortName } = await request.json();
+    const db = await getDb();
 
     await db.run("BEGIN TRANSACTION");
 
     try {
       // First verify the code exists and get the associated user_id
-      const verificationResult = await db.get(
-        "SELECT * FROM verification_codes WHERE code = ?",
-        [code],
-      );
+      const verificationResult = await db.get("SELECT * FROM verification_codes WHERE code = ?", [
+        code,
+      ]);
 
       console.log("verificationResult", verificationResult);
 
       if (!verificationResult) {
         await db.run("ROLLBACK");
-        return NextResponse.json(
-          { error: "Invalid verification code" },
-          { status: 404 },
-        );
+        return NextResponse.json({ error: "Invalid verification code" }, { status: 404 });
       }
 
       // Create a new user
-      const updateResult = await db.run(
-        "INSERT INTO users (id, short_name) VALUES (?, ?)",
-        [verificationResult.user_id, shortName],
-      );
+      const updateResult = await db.run("INSERT INTO users (id, short_name) VALUES (?, ?)", [
+        verificationResult.user_id,
+        shortName,
+      ]);
 
       if (updateResult.changes === 0) {
         await db.run("ROLLBACK");
@@ -40,10 +37,9 @@ export async function POST(request: Request) {
 
       await db.run("COMMIT");
 
-      const user = await db.get(
-        "SELECT id, short_name FROM users WHERE id = ?",
-        [verificationResult.user_id],
-      );
+      const user = await db.get("SELECT id, short_name FROM users WHERE id = ?", [
+        verificationResult.user_id,
+      ]);
 
       return NextResponse.json(user);
     } catch (error) {

@@ -1,0 +1,19 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["import", "typescript", "unicorn", "react", "nextjs"],
+  "env": {
+    "browser": true,
+    "node": true,
+    "es2022": true
+  },
+  "settings": {
+    "react": {
+      "version": "19.3.0"
+    },
+    "next": {
+      "rootDir": "."
+    }
+  },
+  "rules": {},
+  "ignorePatterns": [".next/**", "out/**", "build/**", "node_modules/**", "public/**"]
+}

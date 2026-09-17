@@ -38,9 +38,7 @@ export default function RegisterPage() {
           <Input
             type="text"
             value={formData.code}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, code: e.target.value }))
-            }
+            onChange={(e) => setFormData((prev) => ({ ...prev, code: e.target.value }))}
             required
           />
         </div>
@@ -50,9 +48,7 @@ export default function RegisterPage() {
           <Input
             type="text"
             value={formData.shortName}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, shortName: e.target.value }))
-            }
+            onChange={(e) => setFormData((prev) => ({ ...prev, shortName: e.target.value }))}
             required
           />
         </div>
