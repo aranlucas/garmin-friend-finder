@@ -15,7 +15,7 @@ A Next.js app for finding and tracking Garmin friends.
 
 ## Prerequisites
 
-- Node.js 24
+- Node.js 24 (`nvm use` picks it up from `.nvmrc`; CI reads the same file)
 - pnpm 10+ (`corepack enable` or install from https://pnpm.io)
 - GitHub OAuth credentials for sign-in (`AUTH_GITHUB_ID`, `AUTH_GITHUB_SECRET`)
 
