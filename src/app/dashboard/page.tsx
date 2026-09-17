@@ -22,10 +22,7 @@ export default async function DashboardPage() {
         <h1 className="text-4xl font-bold">Friend Locations</h1>
       </header>
 
-      <section
-        className="w-full max-w-5xl"
-        aria-label="Map showing friend locations"
-      >
+      <section className="w-full max-w-5xl" aria-label="Map showing friend locations">
         <div className="aspect-[21/9] rounded-lg overflow-hidden shadow-lg">
           <ErrorBoundary
             fallback={
@@ -55,8 +52,7 @@ export default async function DashboardPage() {
               <h2 className="text-xl font-semibold">{friend.short_name}</h2>
               {friend.latitude && friend.longitude && (
                 <p className="text-muted-foreground">
-                  Location: {friend.latitude.toFixed(6)},{" "}
-                  {friend.longitude.toFixed(6)}
+                  Location: {friend.latitude.toFixed(6)}, {friend.longitude.toFixed(6)}
                 </p>
               )}
             </div>

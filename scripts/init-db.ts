@@ -1,5 +1,5 @@
 import sqlite3 from "sqlite3";
-import { Database, open } from "sqlite";
+import { open } from "sqlite";
 
 async function initializeDatabase() {
   try {

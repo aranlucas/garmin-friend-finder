@@ -1,10 +1,6 @@
 import { NextResponse } from "next/server";
 import { calculateBearing, calculateDistance } from "@/lib/geo";
-import {
-  getAllFriends,
-  getFriendsWithLocations,
-  updateFriendLocation,
-} from "@/services/friends";
+import { getAllFriends, getFriendsWithLocations, updateFriendLocation } from "@/services/friends";
 
 export async function GET() {
   try {

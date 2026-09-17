@@ -1,4 +1,4 @@
-import db from "@/lib/db";
+import { getDb } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 
 function generateCode(): string {
@@ -11,9 +11,8 @@ export async function GET(request: NextRequest) {
   const userId = searchParams.get("id");
 
   // Check if user exists
-  const user = await db.get("SELECT id, short_name FROM users WHERE id = ?", [
-    userId,
-  ]);
+  const db = await getDb();
+  const user = await db.get("SELECT id, short_name FROM users WHERE id = ?", [userId]);
 
   if (user?.short_name) {
     return NextResponse.json({}, { status: 200 });
@@ -27,6 +26,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: Request) {
   const formData = await request.formData();
   const userId = formData.get("id");
+  const db = await getDb();
   // Check if user exists
   const user = await db.get("SELECT id FROM users WHERE id = ?", [userId]);
 
@@ -36,10 +36,7 @@ export async function POST(request: Request) {
 
   // Generate and store new code
   const code = generateCode();
-  await db.run("INSERT INTO verification_codes (code, user_id) VALUES (?, ?)", [
-    code,
-    userId,
-  ]);
+  await db.run("INSERT INTO verification_codes (code, user_id) VALUES (?, ?)", [code, userId]);
 
   return NextResponse.json({ code }, { status: 201 });
 }

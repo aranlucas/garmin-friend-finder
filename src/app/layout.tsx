@@ -5,13 +5,11 @@ import { MainNav } from "@/components/MainNav";
 import { SessionProvider } from "@/components/SessionProvider";
 import type { ReactNode } from "react";
 
-const META_THEME_COLORS = {
-  light: "#ffffff",
-  dark: "#09090b",
-};
-
 export const viewport: Viewport = {
-  themeColor: META_THEME_COLORS.light,
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#09090b" },
+  ],
 };
 
 export const metadata: Metadata = {
@@ -21,20 +19,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              try {
-                if (localStorage.theme === 'dark' || ((!('theme' in localStorage) || localStorage.theme === 'system') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                  document.querySelector('meta[name="theme-color"]').setAttribute('content', '${META_THEME_COLORS.dark}')
-                }
-              } catch (_) {}
-            `,
-          }}
-        />
-      </head>
+    <html lang="en" suppressHydrationWarning>
       <body className="bg-background">
         <SessionProvider>
           <ThemeProvider
