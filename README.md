@@ -1,66 +1,63 @@
-# Garmin Friend Finder
+# Keep the crew in view when the trail gets big
 
-A Next.js app for finding and tracking Garmin friends.
+[![CI](https://github.com/aranlucas/garmin-friend-finder/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aranlucas/garmin-friend-finder/actions/workflows/ci.yml)
+![Next.js](https://img.shields.io/badge/Next.js-16-000000?logo=nextdotjs&logoColor=white)
+![SQLite](https://img.shields.io/badge/SQLite-local_location_data-003B57?logo=sqlite&logoColor=white)
 
-## Stack
+A small location-sharing prototype for outdoor groups inspired by Garmin friend tracking. Sign in, share a location with the group, and see saved coordinates on a Leaflet map.
 
-- Next.js 16 (App Router, Turbopack) + React 19
-- TypeScript 7
-- Tailwind CSS v4 (CSS-first config)
-- pnpm for package management
-- oxlint for linting, oxfmt for formatting (replacing ESLint + Prettier)
-- Auth.js v5 (next-auth beta) with GitHub provider
-- SQLite (`sqlite` + `sqlite3`) for local storage
-- Leaflet / react-leaflet for maps
+![Illustration of hikers and friends sharing trail locations](docs/images/readme-cover.png)
 
-## Prerequisites
+*Concept artwork for the outdoor safety use case; it is not a screenshot of the app.*
 
-- Node.js 24 (`nvm use` picks it up from `.nvmrc`; CI reads the same file)
-- pnpm 10+ (`corepack enable` or install from https://pnpm.io)
-- GitHub OAuth credentials for sign-in (`AUTH_GITHUB_ID`, `AUTH_GITHUB_SECRET`)
+## What works today
 
-## Run locally
+- GitHub sign-in through Auth.js.
+- A map and friend list backed by SQLite.
+- POST /api/friends accepts an id, lat, and lon, stores the submitted coordinates, then returns other friends' locations with distance and bearing from that point.
+- The local database initializer creates the schema and a sample user.
 
-```bash
+The project does not currently connect to Garmin Connect or sync directly from a Garmin device. The map displays coordinates already written to the app's database.
+
+## Try it locally
+
+Requirements: Node.js 24 and pnpm 12.6.
+
+~~~sh
 pnpm install
 pnpm run init-db
-pnpm run dev
-```
+~~~
 
-Open [http://localhost:3000](http://localhost:3000).
+Create .env.local with a GitHub OAuth app configured for http://localhost:3000:
 
-## Verify
+~~~dotenv
+AUTH_GITHUB_ID=your-github-oauth-client-id
+AUTH_GITHUB_SECRET=your-github-oauth-client-secret
+AUTH_SECRET=replace-with-a-random-secret
+AUTH_URL=http://localhost:3000
+~~~
 
-```bash
-pnpm run format:check
-pnpm run lint
-pnpm run typecheck
-pnpm run build
-pnpm audit --prod
-```
+Start the development server and open [http://localhost:3000](http://localhost:3000):
 
-All five pass on a clean checkout.
+~~~sh
+pnpm dev
+~~~
 
-## Recent modernization
+The SQLite file is friends.db in the project root. Do not use a production database containing real location data for local development.
 
-- **pnpm instead of npm**: `package-lock.json` removed, `pnpm-lock.yaml` +
-  `pnpm-workspace.yaml` added (`allowBuilds` for `sqlite3`/`esbuild`),
-  `packageManager` pinned, CI/Dependabot switched to pnpm.
-- **oxlint / oxfmt**: `.eslintrc.json`, `.prettierrc`, `.prettierignore` and all
-  `eslint-*` / `prettier` deps removed; `.oxlintrc.json` (nextjs + react +
-  typescript plugins) and `.oxfmtrc.json` added; `lint`/`format` scripts use
-  `oxlint` / `oxfmt`.
-- **TypeScript 7**: `tsconfig.json` target raised `ES2017` → `ES2022`, stale
-  `tailwind.config.js` include dropped.
-- **Latest Next.js**: on Next 16.3.5; `next.config.js` → typed `next.config.ts`;
-  removed deprecated `legacyBehavior`/`passHref` links, manual theme `<script>`
-  in favor of `next-themes`, and needless `force-dynamic` on the static
-  homepage.
-- **Tailwind v4 cleanup**: `tailwind.config.ts` deleted (CSS-first),
-  `tailwindcss-animate` → `tw-animate-css`, odd `cn` stub package replaced with
-  `clsx` + `tailwind-merge`.
-- **SQLite singleton**: top-level-await `db` export replaced with a cached
-  `getDb()` (survives dev HMR); all services and API routes updated.
-- `next-auth` beta refreshed to the latest beta (`5.0.0-beta.32`).
-- Local `*.db` files are now gitignored; editor settings and CI point at
-  oxlint/oxfmt.
+## Find your way around
+
+- src/app/ contains the landing page, authenticated dashboard, registration page, and API routes.
+- src/services/friends.ts reads and updates SQLite friend and location records.
+- src/lib/geo.ts calculates distance and bearing.
+- src/components/FriendsMap.tsx renders friend markers with Leaflet.
+- scripts/init-db.ts creates the local schema and inserts a sample record.
+
+Available checks:
+
+~~~sh
+pnpm format:check
+pnpm lint
+pnpm typecheck
+pnpm build
+~~~
