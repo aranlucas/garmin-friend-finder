@@ -8,7 +8,7 @@ A small location-sharing prototype for outdoor groups inspired by Garmin friend 
 
 ![Illustration of hikers and friends sharing trail locations](docs/images/readme-cover.png)
 
-*Concept artwork for the outdoor safety use case; it is not a screenshot of the app.*
+_Concept artwork for the outdoor safety use case; it is not a screenshot of the app._
 
 ## What works today
 
@@ -23,25 +23,25 @@ The project does not currently connect to Garmin Connect or sync directly from a
 
 Requirements: Node.js 24 and pnpm 12.6.
 
-~~~sh
+```sh
 pnpm install
 pnpm run init-db
-~~~
+```
 
 Create .env.local with a GitHub OAuth app configured for http://localhost:3000:
 
-~~~dotenv
+```dotenv
 AUTH_GITHUB_ID=your-github-oauth-client-id
 AUTH_GITHUB_SECRET=your-github-oauth-client-secret
 AUTH_SECRET=replace-with-a-random-secret
 AUTH_URL=http://localhost:3000
-~~~
+```
 
 Start the development server and open [http://localhost:3000](http://localhost:3000):
 
-~~~sh
+```sh
 pnpm dev
-~~~
+```
 
 The SQLite file is friends.db in the project root. Do not use a production database containing real location data for local development.
 
@@ -55,9 +55,9 @@ The SQLite file is friends.db in the project root. Do not use a production datab
 
 Available checks:
 
-~~~sh
+```sh
 pnpm format:check
 pnpm lint
 pnpm typecheck
 pnpm build
-~~~
+```
