@@ -10,11 +10,11 @@ export const revalidate = 0;
 
 export default async function DashboardPage() {
   const session = await auth();
-  if (!session) {
+  if (!session?.user?.id) {
     redirect("/");
   }
 
-  const friends = await getFriendsWithLocations();
+  const friends = await getFriendsWithLocations(session.user);
 
   return (
     <main className="flex min-h-screen flex-col items-center p-8 gap-8">
@@ -50,11 +50,9 @@ export default async function DashboardPage() {
               className="p-4 rounded-lg border bg-card text-card-foreground shadow-sm"
             >
               <h2 className="text-xl font-semibold">{friend.short_name}</h2>
-              {friend.latitude && friend.longitude && (
-                <p className="text-muted-foreground">
-                  Location: {friend.latitude.toFixed(6)}, {friend.longitude.toFixed(6)}
-                </p>
-              )}
+              <p className="text-muted-foreground">
+                Location: {friend.latitude.toFixed(6)}, {friend.longitude.toFixed(6)}
+              </p>
             </div>
           ))}
         </div>

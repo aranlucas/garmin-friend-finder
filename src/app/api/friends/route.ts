@@ -1,53 +1,54 @@
 import { NextResponse } from "next/server";
-import { calculateBearing, calculateDistance } from "@/lib/geo";
-import { getAllFriends, getFriendsWithLocations, updateFriendLocation } from "@/services/friends";
+import { auth } from "@/auth";
+import { getAllFriends, LocationSharingError, shareMyLocation } from "@/services/friends";
+
+function errorResponse(error: unknown) {
+  if (error instanceof LocationSharingError) {
+    const status = {
+      unauthorized: 401,
+      invalid_coordinates: 400,
+      user_not_found: 404,
+    }[error.code];
+    return NextResponse.json({ error: error.code }, { status });
+  }
+  console.error("Location sharing error:", error);
+  return NextResponse.json({ error: "server error" }, { status: 500 });
+}
 
 export async function GET() {
   try {
-    const friends = await getAllFriends();
-    return NextResponse.json(friends);
+    const session = await auth();
+    const friends = await getAllFriends(session?.user);
+    return NextResponse.json(friends, { headers: { "Cache-Control": "private, no-store" } });
   } catch (error) {
-    console.error("Database error:", error);
-    return NextResponse.json({ error: "database error" }, { status: 500 });
+    return errorResponse(error);
   }
 }
 
 export async function POST(request: Request) {
-  const formData = await request.formData();
-  const lat = formData.get("lat");
-  const lon = formData.get("lon");
-  const id = formData.get("id");
-
-  if (!lat || !lon || !id) {
-    return NextResponse.json({ error: "bad request" }, { status: 400 });
-  }
-
   try {
-    await updateFriendLocation(id.toString(), Number(lat), Number(lon));
+    const session = await auth();
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+    }
 
-    const friends = await getFriendsWithLocations();
-    const otherFriends = friends.filter((friend) => friend.id !== id);
-    const currentLocation = { latitude: Number(lat), longitude: Number(lon) };
+    let formData: FormData;
+    try {
+      formData = await request.formData();
+    } catch {
+      return NextResponse.json({ error: "bad request" }, { status: 400 });
+    }
+    if (formData.getAll("lat").length !== 1 || formData.getAll("lon").length !== 1) {
+      return NextResponse.json({ error: "invalid_coordinates" }, { status: 400 });
+    }
 
-    const friendsWithBearing = otherFriends.map((friend) => ({
-      ...friend,
-      bearing: calculateBearing(
-        currentLocation.latitude,
-        currentLocation.longitude,
-        friend.latitude!,
-        friend.longitude!,
-      ),
-      distance: calculateDistance(
-        currentLocation.latitude,
-        currentLocation.longitude,
-        friend.latitude!,
-        friend.longitude!,
-      ),
-    }));
-
-    return NextResponse.json(friendsWithBearing);
+    // The legacy id field is deliberately ignored; only the session owns a location.
+    const friends = await shareMyLocation(session.user, {
+      latitude: formData.get("lat"),
+      longitude: formData.get("lon"),
+    });
+    return NextResponse.json(friends, { headers: { "Cache-Control": "private, no-store" } });
   } catch (error) {
-    console.error("Database error:", error);
-    return NextResponse.json({ error: "database error" }, { status: 500 });
+    return errorResponse(error);
   }
 }

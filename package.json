@@ -11,7 +11,8 @@
     "init-db": "pnpm dlx tsx scripts/init-db.ts",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --experimental-test-module-mocks --test tests/*.test.mts"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.23",
