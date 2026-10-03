@@ -5,9 +5,11 @@ import { getAllFriends, getFriendsWithLocations, updateFriendLocation } from "@/
 export async function GET() {
   try {
     const friends = await getAllFriends();
+
     return NextResponse.json(friends);
   } catch (error) {
     console.error("Database error:", error);
+
     return NextResponse.json({ error: "database error" }, { status: 500 });
   }
 }
@@ -48,6 +50,7 @@ export async function POST(request: Request) {
     return NextResponse.json(friendsWithBearing);
   } catch (error) {
     console.error("Database error:", error);
+
     return NextResponse.json({ error: "database error" }, { status: 500 });
   }
 }

@@ -3,6 +3,7 @@ import type { Friend } from "@/types";
 
 export async function getAllFriends(): Promise<Friend[]> {
   const db = await getDb();
+
   return db.all<Friend[]>(`
     SELECT 
       u.id,
@@ -16,6 +17,7 @@ export async function getAllFriends(): Promise<Friend[]> {
 
 export async function getFriendsWithLocations(): Promise<Friend[]> {
   const db = await getDb();
+
   return db.all<Friend[]>(`
     SELECT 
       u.id,
@@ -31,6 +33,7 @@ export async function updateFriendLocation(userId: string, latitude: number, lon
   const db = await getDb();
   // First check if user exists
   const user = await db.get("SELECT id FROM users WHERE id = ?", [userId]);
+
   if (!user) {
     throw new Error(`User with ID ${userId} not found`);
   }

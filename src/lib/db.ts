@@ -1,9 +1,9 @@
 import sqlite3 from "sqlite3";
 import { type Database, open } from "sqlite";
 
-const globalForDb = globalThis as unknown as {
-  __dbPromise?: Promise<Database>;
-};
+declare global {
+  var __dbPromise: Promise<Database> | undefined;
+}
 
 function createConnection(): Promise<Database> {
   return open({
@@ -13,8 +13,9 @@ function createConnection(): Promise<Database> {
 }
 
 export function getDb(): Promise<Database> {
-  if (!globalForDb.__dbPromise) {
-    globalForDb.__dbPromise = createConnection();
+  if (!globalThis.__dbPromise) {
+    globalThis.__dbPromise = createConnection();
   }
-  return globalForDb.__dbPromise;
+
+  return globalThis.__dbPromise;
 }

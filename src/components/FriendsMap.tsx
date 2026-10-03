@@ -8,7 +8,7 @@ import { ErrorBoundary } from "react-error-boundary";
 
 const MAP_CONFIG = {
   SEATTLE: {
-    position: [47.6062, -122.3321] as LatLngTuple,
+    position: [47.6062, -122.3321] satisfies LatLngTuple,
     zoom: 12,
   },
   BOUNDS_PADDING: 0.2,
@@ -28,6 +28,7 @@ function calculateBounds(friends: Friend[]): LatLngBounds | null {
   if (friends.length === 0) return null;
 
   const coordinates = friends.map((friend): LatLngTuple => [friend.latitude, friend.longitude]);
+
   return latLngBounds(coordinates).pad(MAP_CONFIG.BOUNDS_PADDING);
 }
 

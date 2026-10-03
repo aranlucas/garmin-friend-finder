@@ -16,6 +16,7 @@ export default async function SignIn() {
       </div>
     );
   }
+
   return (
     <Button asChild>
       <Link href="/api/auth/signin">Get started</Link>

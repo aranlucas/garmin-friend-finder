@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 
 export default function RegisterPage() {
   const router = useRouter();
+
   const [formData, setFormData] = useState({
     code: "",
     shortName: "",
