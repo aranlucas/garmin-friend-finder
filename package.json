@@ -11,7 +11,8 @@
     "init-db": "pnpm dlx tsx scripts/init-db.ts",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test test/*.test.ts"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.23",
@@ -39,12 +40,13 @@
     "tw-animate-css": "^1.4.0"
   },
   "devDependencies": {
+    "@oxlint/plugins": "1.86.0",
     "@types/leaflet": "^1.9.22",
     "@types/node": "^26",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "oxfmt": "^0.71.0",
-    "oxlint": "^1.86.0",
+    "oxlint": "1.86.0",
     "postcss": "^8.5.28",
     "tailwindcss": "^4.3.3",
     "tsx": "^4.23.15",

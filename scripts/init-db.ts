@@ -38,6 +38,7 @@ async function initializeDatabase() {
 
     // Insert sample data
     await db.run("BEGIN TRANSACTION");
+
     try {
       // Sample users
       await db.run(

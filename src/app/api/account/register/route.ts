@@ -18,6 +18,7 @@ export async function POST(request: Request) {
 
       if (!verificationResult) {
         await db.run("ROLLBACK");
+
         return NextResponse.json({ error: "Invalid verification code" }, { status: 404 });
       }
 
@@ -29,6 +30,7 @@ export async function POST(request: Request) {
 
       if (updateResult.changes === 0) {
         await db.run("ROLLBACK");
+
         return NextResponse.json({ error: "User not found" }, { status: 404 });
       }
 
@@ -48,6 +50,7 @@ export async function POST(request: Request) {
     }
   } catch (error) {
     console.error("Registration error:", error);
+
     return NextResponse.json({ error: "Failed to register" }, { status: 500 });
   }
 }
