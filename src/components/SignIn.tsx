@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { auth } from "@/auth";
 
 export default async function SignIn() {
@@ -9,17 +9,17 @@ export default async function SignIn() {
     return (
       <div className="flex flex-col items-center gap-4">
         <div className="flex gap-4">
-          <Button asChild>
-            <Link href="/account/register">Register Device</Link>
-          </Button>
+          <Link href="/account/register" className={buttonVariants()}>
+            Register Device
+          </Link>
         </div>
       </div>
     );
   }
 
   return (
-    <Button asChild>
-      <Link href="/api/auth/signin">Get started</Link>
-    </Button>
+    <Link href="/api/auth/signin" className={buttonVariants()}>
+      Get started
+    </Link>
   );
 }
