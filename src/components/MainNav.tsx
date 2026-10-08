@@ -13,10 +13,11 @@ import { ModeToggle } from "./ModeToggle";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Button } from "./ui/button";
+import { Button, buttonVariants } from "./ui/button";
 import { User } from "lucide-react";
 
 export function MainNav() {
@@ -27,45 +28,49 @@ export function MainNav() {
       <NavigationMenu>
         <NavigationMenuList>
           <NavigationMenuItem>
-            <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-              <Link href="/">Home</Link>
+            <NavigationMenuLink render={<Link href="/" />} className={navigationMenuTriggerStyle()}>
+              Home
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-              <Link href="/dashboard">Dashboard</Link>
+            <NavigationMenuLink
+              render={<Link href="/dashboard" />}
+              className={navigationMenuTriggerStyle()}
+            >
+              Dashboard
             </NavigationMenuLink>
           </NavigationMenuItem>
         </NavigationMenuList>
       </NavigationMenu>
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center gap-2">
         <ModeToggle />
         {status === "authenticated" ? (
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <User className="h-5 w-5" />
-                <span className="sr-only">User menu</span>
-              </Button>
+            <DropdownMenuTrigger render={<Button variant="ghost" size="icon" />}>
+              <User />
+              <span className="sr-only">User menu</span>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem className="font-normal">
-                <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none">{session.user?.name}</p>
-                  <p className="text-xs leading-none text-muted-foreground">
-                    {session.user?.email}
-                  </p>
-                </div>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => signOut()}>Sign out</DropdownMenuItem>
+              <DropdownMenuGroup>
+                <DropdownMenuItem className="font-normal">
+                  <div className="flex flex-col gap-1">
+                    <p className="text-sm font-medium leading-none">{session.user?.name}</p>
+                    <p className="text-xs leading-none text-muted-foreground">
+                      {session.user?.email}
+                    </p>
+                  </div>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => signOut()}>Sign out</DropdownMenuItem>
+              </DropdownMenuGroup>
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (
-          <Link href="/api/auth/signin">
-            <Button variant="ghost" size="icon">
-              <User className="h-5 w-5" />
-              <span className="sr-only">Sign in</span>
-            </Button>
+          <Link
+            href="/api/auth/signin"
+            className={buttonVariants({ variant: "ghost", size: "icon" })}
+          >
+            <User />
+            <span className="sr-only">Sign in</span>
           </Link>
         )}
       </div>
