@@ -28,16 +28,16 @@ pnpm install
 pnpm run init-db
 ```
 
-Create .env.local with a GitHub OAuth app configured for http://localhost:3000:
+Create .env.local with a GitHub OAuth app configured for https://garmin-friend-finder.localhost:
 
 ```dotenv
 AUTH_GITHUB_ID=your-github-oauth-client-id
 AUTH_GITHUB_SECRET=your-github-oauth-client-secret
 AUTH_SECRET=replace-with-a-random-secret
-AUTH_URL=http://localhost:3000
+AUTH_URL=https://garmin-friend-finder.localhost
 ```
 
-Start the development server and open [http://localhost:3000](http://localhost:3000):
+Start the development server and open [https://garmin-friend-finder.localhost](https://garmin-friend-finder.localhost). `pnpm dev` runs through [Portless](https://github.com/vercel-labs/portless) (a dev dependency); its first run may ask for `sudo` to bind port 443 and trust a local certificate.
 
 ```sh
 pnpm dev

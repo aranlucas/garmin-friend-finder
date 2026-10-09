@@ -1,9 +1,9 @@
 {
-  "name": "next-shadcn",
+  "name": "garmin-friend-finder",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "portless run next dev",
     "build": "next build",
     "start": "next start",
     "lint": "oxlint",
@@ -42,6 +42,7 @@
     "@types/react-dom": "^19",
     "oxfmt": "^0.72.0",
     "oxlint": "1.87.0",
+    "portless": "0.15.7",
     "postcss": "^8.5.29",
     "tailwindcss": "^4.3.3",
     "tsx": "^4.23.15",
