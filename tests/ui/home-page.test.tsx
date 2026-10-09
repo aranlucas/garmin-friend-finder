@@ -1,14 +1,11 @@
+import Link from "next/link";
 import { render, screen } from "@testing-library/react";
-import { expect, test, vi } from "vitest";
+import { expect, test } from "vitest";
 
-vi.mock("@/components/SignIn", () => ({
-  default: () => <a href="/api/auth/signin">Get started</a>,
-}));
-
-import HomePage from "../../src/app/page";
+import { HomePageView } from "../../src/components/home-page-view";
 
 test("home page renders the mountain safety heading", () => {
-  render(<HomePage />);
+  render(<HomePageView signIn={<Link href="/api/auth/signin">Get started</Link>} />);
 
   expect(
     screen.getByRole("heading", {
@@ -16,4 +13,7 @@ test("home page renders the mountain safety heading", () => {
       name: "Mountain Safety Together",
     }),
   ).toBeDefined();
+  expect(screen.getByRole("link", { name: "Get started" }).getAttribute("href")).toBe(
+    "/api/auth/signin",
+  );
 });
