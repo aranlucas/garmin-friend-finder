@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "dev:portless": "portless",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -47,5 +48,9 @@
     "tsx": "^4.23.15",
     "typescript": "^7.0.2"
   },
-  "packageManager": "pnpm@12.10.1"
+  "packageManager": "pnpm@12.10.1",
+  "portless": {
+    "name": "garmin-friend-finder",
+    "script": "dev"
+  }
 }
