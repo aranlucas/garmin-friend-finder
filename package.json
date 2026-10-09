@@ -12,9 +12,8 @@
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "typecheck": "tsc --noEmit",
-    "test": "vitest",
-    "test:node": "node --import tsx --test test/*.test.ts",
-    "test:all": "vitest run && npm run test:node"
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
