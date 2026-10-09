@@ -28,24 +28,25 @@ pnpm install
 pnpm run init-db
 ```
 
-Create .env.local with a GitHub OAuth app configured for http://localhost:3000:
+Create .env.local with a GitHub OAuth app configured for https://garmin-friend-finder.localhost:
 
 ```dotenv
 AUTH_GITHUB_ID=your-github-oauth-client-id
 AUTH_GITHUB_SECRET=your-github-oauth-client-secret
 AUTH_SECRET=replace-with-a-random-secret
-AUTH_URL=http://localhost:3000
+AUTH_URL=https://garmin-friend-finder.localhost
 ```
 
-Start the development server and open [http://localhost:3000](http://localhost:3000):
+Start the development server and open [https://garmin-friend-finder.localhost](https://garmin-friend-finder.localhost):
 
 ```sh
+npm install -g portless@0.15.7
 pnpm dev
 ```
 
 The SQLite file is friends.db in the project root. Do not use a production database containing real location data for local development.
 
-### Named local URL with Portless (optional)
+### Named local URL with Portless
 
 After the normal project setup, use [Portless](https://github.com/vercel-labs/portless/tree/v0.15.7)
 to run this app alongside other repositories without choosing a port. Use Node.js
@@ -53,7 +54,7 @@ to run this app alongside other repositories without choosing a port. Use Node.j
 
 ```sh
 npm install -g portless@0.15.7
-pnpm dev:portless
+pnpm dev
 ```
 
 With default proxy settings, the primary checkout is available at
@@ -71,10 +72,10 @@ For GitHub sign-in, set `AUTH_URL=https://garmin-friend-finder.localhost` in
 `.env.local` and configure your development GitHub OAuth app with the callback
 `https://garmin-friend-finder.localhost/api/auth/callback/github`. Keep the existing
 `AUTH_GITHUB_ID`, `AUTH_GITHUB_SECRET`, and `AUTH_SECRET` setup. Each worktree URL
-needs a matching OAuth callback; use the normal localhost workflow when the OAuth
+needs a matching OAuth callback; use `pnpm dev:direct` when the OAuth
 app is still configured for `http://localhost:3000`.
 
-Use `pnpm dev` for the original localhost workflow.
+Use `pnpm dev:direct` for the localhost workflow.
 
 ## Find your way around
 
