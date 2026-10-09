@@ -58,8 +58,8 @@ pnpm dev
 ```
 
 With default proxy settings, the primary checkout is available at
-[https://garmin-friend-finder.localhost](https://garmin-friend-finder.localhost). Portless runs the
-existing `dev` script with an available `PORT`. Linked Git worktrees get a branch
+[https://garmin-friend-finder.localhost](https://garmin-friend-finder.localhost). Portless starts
+Next.js on an available `PORT`. Linked Git worktrees get a branch
 prefix; use the exact URL printed at startup. The proxy reuses its most recent
 settings, so a custom port or domain can change that URL.
 
@@ -72,10 +72,7 @@ For GitHub sign-in, set `AUTH_URL=https://garmin-friend-finder.localhost` in
 `.env.local` and configure your development GitHub OAuth app with the callback
 `https://garmin-friend-finder.localhost/api/auth/callback/github`. Keep the existing
 `AUTH_GITHUB_ID`, `AUTH_GITHUB_SECRET`, and `AUTH_SECRET` setup. Each worktree URL
-needs a matching OAuth callback; use `pnpm dev:direct` when the OAuth
-app is still configured for `http://localhost:3000`.
-
-Use `pnpm dev:direct` for the localhost workflow.
+needs a matching OAuth callback.
 
 ## Find your way around
 
