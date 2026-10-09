@@ -242,6 +242,9 @@ importers:
       oxlint:
         specifier: 1.87.0
         version: 1.87.0
+      portless:
+        specifier: 0.15.7
+        version: 0.15.7
       postcss:
         specifier: ^8.5.29
         version: 8.5.29
@@ -1552,6 +1555,12 @@ packages:
     resolution: {integrity: sha512-qcJu88Q2IWqJsDD529JKMdwGm/dvInW4HvQnRwiH9JtihJvzGOscDtHE3x1pBKeUOTysQ8kVmLnJ2kJu7yhcGA==}
     engines: {node: '>=12'}
 
+  portless@0.15.7:
+    resolution: {integrity: sha512-fffMnzfwU/0chJmOMmeAOjFouRsZUmdJagxdqE4DATLw83ssAnHX4BzvNqOI5vBgsuvWLX5ZLg63bzs7zdVFNw==}
+    engines: {node: '>=24'}
+    os: [darwin, linux, win32]
+    hasBin: true
+
   postcss@8.5.23:
     resolution: {integrity: sha512-g50586zr4bZmwFiTlflMu8E0bDTb5I5gertgwAKmsdUlTQIhZtunzUlD1WSzwcVWPoAVpsrA6vlfCD7oXvRwgg==}
     engines: {node: ^10 || ^12 || >=14}
@@ -2638,6 +2647,8 @@ snapshots:
 
   picomatch@4.0.7:
     optional: true
+
+  portless@0.15.7: {}
 
   postcss@8.5.23:
     dependencies:

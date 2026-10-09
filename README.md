@@ -37,42 +37,13 @@ AUTH_SECRET=replace-with-a-random-secret
 AUTH_URL=https://garmin-friend-finder.localhost
 ```
 
-Start the development server and open [https://garmin-friend-finder.localhost](https://garmin-friend-finder.localhost):
+Start the development server and open [https://garmin-friend-finder.localhost](https://garmin-friend-finder.localhost). `pnpm dev` runs through [Portless](https://github.com/vercel-labs/portless) (a dev dependency); its first run may ask for `sudo` to bind port 443 and trust a local certificate.
 
 ```sh
-npm install -g portless@0.15.7
 pnpm dev
 ```
 
 The SQLite file is friends.db in the project root. Do not use a production database containing real location data for local development.
-
-### Named local URL with Portless
-
-After the normal project setup, use [Portless](https://github.com/vercel-labs/portless/tree/v0.15.7)
-to run this app alongside other repositories without choosing a port. Use Node.js
-24 or newer, within this project's supported Node version, and install the CLI once:
-
-```sh
-npm install -g portless@0.15.7
-pnpm dev
-```
-
-With default proxy settings, the primary checkout is available at
-[https://garmin-friend-finder.localhost](https://garmin-friend-finder.localhost). Portless starts
-Next.js on an available `PORT`. Linked Git worktrees get a branch
-prefix; use the exact URL printed at startup. The proxy reuses its most recent
-settings, so a custom port or domain can change that URL.
-
-Run the first launch in an interactive terminal: the default HTTPS setup may ask
-to trust a local certificate authority and request administrator access for port
-443 and local hostname entries. Use `portless list` to see routes and
-`portless doctor` for connection or certificate problems.
-
-For GitHub sign-in, set `AUTH_URL=https://garmin-friend-finder.localhost` in
-`.env.local` and configure your development GitHub OAuth app with the callback
-`https://garmin-friend-finder.localhost/api/auth/callback/github`. Keep the existing
-`AUTH_GITHUB_ID`, `AUTH_GITHUB_SECRET`, and `AUTH_SECRET` setup. Each worktree URL
-needs a matching OAuth callback.
 
 ## Find your way around
 
