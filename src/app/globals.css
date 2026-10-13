@@ -139,6 +139,7 @@
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
+  --color-secondary-hover: color-mix(in oklch, var(--secondary), var(--foreground) 5%);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
@@ -194,5 +195,104 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@utility transition-input {
+  transition-property: color, box-shadow;
+}
+
+@utility button-hover-secondary {
+  &:hover {
+    background-color: color-mix(in oklch, var(--secondary), var(--foreground) 5%);
+  }
+}
+
+@utility button-radius-xs {
+  border-radius: min(var(--radius-md), 8px);
+}
+
+@utility button-radius-sm {
+  border-radius: min(var(--radius-md), 10px);
+}
+
+@utility dropdown-available-height {
+  max-height: var(--available-height);
+}
+
+@utility dropdown-anchor-width {
+  width: var(--anchor-width);
+}
+
+@utility dropdown-transform-origin {
+  transform-origin: var(--transform-origin);
+}
+
+@utility navigation-positioner-height {
+  height: var(--positioner-height);
+}
+
+@utility navigation-positioner-width {
+  width: var(--positioner-width);
+}
+
+@utility navigation-available-width {
+  max-width: var(--available-width);
+}
+
+@utility navigation-popup-height {
+  height: var(--popup-height);
+}
+
+@utility navigation-popup-width {
+  width: var(--popup-width);
+}
+
+@utility navigation-popup-origin {
+  transform-origin: var(--transform-origin);
+}
+
+@utility navigation-motion {
+  transition-property: opacity, transform, translate;
+  transition-duration: 350ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@utility navigation-positioner-motion {
+  transition-property: top, left, right, bottom;
+  transition-duration: 350ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@utility navigation-popup-motion {
+  transition-property: opacity, transform, width, height, scale, translate;
+  transition-duration: 350ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@utility navigation-arrow-offset {
+  inset-block-start: -10px;
+}
+
+@utility navigation-indicator-offset {
+  inset-block-start: 60%;
+}
+
+@utility nav-content-motion {
+  transition-property: opacity, transform, translate;
+  transition-duration: 350ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+
+  &[data-ending-style][data-activation-direction="left"] {
+    translate: 50%;
+  }
+  &[data-ending-style][data-activation-direction="right"] {
+    translate: -50%;
+  }
+  &[data-starting-style][data-activation-direction="left"] {
+    translate: -50%;
+  }
+  &[data-starting-style][data-activation-direction="right"] {
+    translate: 50%;
   }
 }

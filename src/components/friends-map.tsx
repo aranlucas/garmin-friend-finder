@@ -2,7 +2,8 @@
 
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import { icon, latLngBounds, LatLngBounds, LatLngTuple } from "leaflet";
+import type { LatLngBounds, LatLngTuple } from "leaflet";
+import { icon, latLngBounds } from "leaflet";
 import type { Friend } from "@/types";
 import { ErrorBoundary } from "react-error-boundary";
 
@@ -34,22 +35,26 @@ function calculateBounds(friends: Friend[]): LatLngBounds | null {
 
 function FallbackComponent() {
   return (
-    <div className="w-full h-full bg-gray-100 rounded-lg flex items-center justify-center text-gray-600">
+    <div className="flex size-full items-center justify-center rounded-lg bg-gray-100 text-gray-600">
       Error loading map
     </div>
   );
 }
 
-export default function FriendsMap({ friends }: { friends: Friend[] }) {
+interface FriendsMapProps {
+  friends: Friend[];
+}
+
+export default function FriendsMap({ friends }: Readonly<FriendsMapProps>) {
   const bounds = calculateBounds(friends);
 
   return (
     <ErrorBoundary FallbackComponent={FallbackComponent}>
       <MapContainer
-        bounds={bounds || undefined}
+        bounds={bounds ?? undefined}
         zoom={bounds ? undefined : MAP_CONFIG.SEATTLE.zoom}
         center={bounds ? undefined : MAP_CONFIG.SEATTLE.position}
-        className="w-full h-full rounded-lg z-0"
+        className="z-0 size-full rounded-lg"
       >
         <TileLayer attribution={MAP_CONFIG.ATTRIBUTION} url={MAP_CONFIG.TILE_URL} />
         {friends.map((friend) => (

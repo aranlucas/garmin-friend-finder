@@ -59,4 +59,4 @@ async function initializeDatabase() {
   }
 }
 
-initializeDatabase();
+await initializeDatabase();

@@ -1,6 +1,10 @@
 import { getDb } from "@/lib/db";
 import type { Friend } from "@/types";
 
+interface UserIdRow {
+  id: string;
+}
+
 export async function getAllFriends(): Promise<Friend[]> {
   const db = await getDb();
 
@@ -32,7 +36,7 @@ export async function getFriendsWithLocations(): Promise<Friend[]> {
 export async function updateFriendLocation(userId: string, latitude: number, longitude: number) {
   const db = await getDb();
   // First check if user exists
-  const user = await db.get("SELECT id FROM users WHERE id = ?", [userId]);
+  const user = await db.get<UserIdRow>("SELECT id FROM users WHERE id = ?", [userId]);
 
   if (!user) {
     throw new Error(`User with ID ${userId} not found`);

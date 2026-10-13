@@ -8,10 +8,10 @@ import { getDb } from "../src/lib/db";
 test("getDb reuses the process-wide connection promise", async () => {
   const directory = await mkdtemp(path.join(tmpdir(), "garmin-db-test-"));
   const previousDirectory = process.cwd();
-  const previousPromise = globalThis.__dbPromise;
+  const previousPromise = globalThis.dbPromise;
 
   process.chdir(directory);
-  globalThis.__dbPromise = undefined;
+  globalThis.dbPromise = undefined;
 
   try {
     const first = getDb();
@@ -24,7 +24,7 @@ test("getDb reuses the process-wide connection promise", async () => {
     assert.deepEqual(await database.get("SELECT 1 AS value"), { value: 1 });
     await database.close();
   } finally {
-    globalThis.__dbPromise = previousPromise;
+    globalThis.dbPromise = previousPromise;
     process.chdir(previousDirectory);
     await rm(directory, { recursive: true, force: true });
   }

@@ -1,8 +1,8 @@
 import "./globals.css";
 import type { Metadata, Viewport } from "next";
 import { ThemeProvider } from "@/components/theme-provider";
-import { MainNav } from "@/components/MainNav";
-import { SessionProvider } from "@/components/SessionProvider";
+import { MainNav } from "@/components/main-nav";
+import { SessionProvider } from "@/components/session-provider";
 import type { ReactNode } from "react";
 
 export const viewport: Viewport = {
@@ -17,7 +17,11 @@ export const metadata: Metadata = {
   description: "Garmin Friend Finder",
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+interface RootLayoutProps {
+  children: ReactNode;
+}
+
+export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="bg-background">
@@ -28,9 +32,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             enableSystem
             disableTransitionOnChange
           >
-            <div className="min-h-svh flex flex-col">
-              <header className="border-b">
-                <div className="container mx-auto px-4 h-12">
+            <div className="flex min-h-svh flex-col">
+              <header className="border-be">
+                <div className="container mx-auto h-12 px-4">
                   <MainNav />
                 </div>
               </header>

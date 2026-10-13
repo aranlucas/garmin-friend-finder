@@ -1,18 +1,35 @@
 import { NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
 
+interface VerificationCodeRow {
+  user_id: string;
+}
+
+interface RegisteredUser {
+  id: string;
+  short_name: string;
+}
+
 export async function POST(request: Request) {
   try {
-    const { code, shortName } = await request.json();
+    const body: unknown = await request.json();
+    if (typeof body !== "object" || body === null || !("code" in body) || !("shortName" in body)) {
+      return NextResponse.json({ error: "Invalid registration data" }, { status: 400 });
+    }
+    const { code, shortName } = body;
+    if (typeof code !== "string" || typeof shortName !== "string") {
+      return NextResponse.json({ error: "Invalid registration data" }, { status: 400 });
+    }
     const db = await getDb();
 
     await db.run("BEGIN TRANSACTION");
 
     try {
       // First verify the code exists and get the associated user_id
-      const verificationResult = await db.get("SELECT * FROM verification_codes WHERE code = ?", [
-        code,
-      ]);
+      const verificationResult = await db.get<VerificationCodeRow>(
+        "SELECT user_id FROM verification_codes WHERE code = ?",
+        [code],
+      );
 
       console.log("verificationResult", verificationResult);
 
@@ -39,7 +56,7 @@ export async function POST(request: Request) {
 
       await db.run("COMMIT");
 
-      const user = await db.get("SELECT id, short_name FROM users WHERE id = ?", [
+      const user = await db.get<RegisteredUser>("SELECT id, short_name FROM users WHERE id = ?", [
         verificationResult.user_id,
       ]);
 
