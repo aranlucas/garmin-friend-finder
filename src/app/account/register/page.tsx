@@ -29,14 +29,21 @@ export default function RegisterPage() {
     }
   };
 
+  const onSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
+    handleSubmit(event).catch((error: unknown) => console.error(error));
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <form onSubmit={handleSubmit} className="space-y-4 w-full max-w-md p-8">
-        <h1 className="text-2xl font-bold mb-6">Register Device</h1>
+    <div className="flex min-h-screen items-center justify-center">
+      <form onSubmit={onSubmit} className="flex w-full max-w-md flex-col gap-4 p-8">
+        <h1 className="mbe-6 text-2xl font-bold">Register Device</h1>
 
         <div>
-          <label className="block text-sm font-medium mb-2">Code</label>
+          <label htmlFor="code" className="mbe-2 block text-sm font-medium">
+            Code
+          </label>
           <Input
+            id="code"
             type="text"
             value={formData.code}
             onChange={(e) => setFormData((prev) => ({ ...prev, code: e.target.value }))}
@@ -45,8 +52,11 @@ export default function RegisterPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-2">Short Name</label>
+          <label htmlFor="shortName" className="mbe-2 block text-sm font-medium">
+            Short Name
+          </label>
           <Input
+            id="shortName"
             type="text"
             value={formData.shortName}
             onChange={(e) => setFormData((prev) => ({ ...prev, shortName: e.target.value }))}

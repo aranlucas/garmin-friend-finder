@@ -19,6 +19,9 @@
     },
     "next": {
       "rootDir": "."
+    },
+    "tailwindcss": {
+      "entryPoint": "src/app/globals.css"
     }
   },
   "rules": {

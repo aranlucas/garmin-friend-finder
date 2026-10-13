@@ -2,14 +2,14 @@
 
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
+import { navigationMenuTriggerStyle } from "./ui/navigation-menu-trigger-style";
 import {
   NavigationMenu,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
-import { navigationMenuTriggerStyle } from "@/components/ui/navigation-menu";
-import { ModeToggle } from "./ModeToggle";
+import { ModeToggle } from "./mode-toggle";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,14 +17,15 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Button, buttonVariants } from "./ui/button";
+import { Button } from "./ui/button";
+import { buttonVariants } from "./ui/button-variants";
 import { User } from "lucide-react";
 
 export function MainNav() {
   const { data: session, status } = useSession();
 
   return (
-    <div className="flex items-center justify-between w-full mt-2">
+    <div className="mbs-2 flex w-full items-center justify-between">
       <NavigationMenu>
         <NavigationMenuList>
           <NavigationMenuItem>
@@ -54,13 +55,19 @@ export function MainNav() {
               <DropdownMenuGroup>
                 <DropdownMenuItem className="font-normal">
                   <div className="flex flex-col gap-1">
-                    <p className="text-sm font-medium leading-none">{session.user?.name}</p>
+                    <p className="text-sm leading-none font-medium">{session.user?.name}</p>
                     <p className="text-xs leading-none text-muted-foreground">
                       {session.user?.email}
                     </p>
                   </div>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => signOut()}>Sign out</DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    void signOut().catch((error: unknown) => console.error(error));
+                  }}
+                >
+                  Sign out
+                </DropdownMenuItem>
               </DropdownMenuGroup>
             </DropdownMenuContent>
           </DropdownMenu>

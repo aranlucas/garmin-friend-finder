@@ -1,5 +1,15 @@
 import { getDb } from "@/lib/db";
-import { NextRequest, NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
+
+interface UserIdRow {
+  id: string;
+}
+
+interface AccountRow {
+  id: string;
+  short_name: string;
+}
 
 function generateCode(): string {
   return Math.floor(100000 + Math.random() * 900000).toString();
@@ -12,7 +22,7 @@ export async function GET(request: NextRequest) {
 
   // Check if user exists
   const db = await getDb();
-  const user = await db.get("SELECT id, short_name FROM users WHERE id = ?", [userId]);
+  const user = await db.get<AccountRow>("SELECT id, short_name FROM users WHERE id = ?", [userId]);
 
   if (user?.short_name) {
     return NextResponse.json({}, { status: 200 });
@@ -28,7 +38,7 @@ export async function POST(request: Request) {
   const userId = formData.get("id");
   const db = await getDb();
   // Check if user exists
-  const user = await db.get("SELECT id FROM users WHERE id = ?", [userId]);
+  const user = await db.get<UserIdRow>("SELECT id FROM users WHERE id = ?", [userId]);
 
   if (user) {
     return NextResponse.json({}, { status: 200 });

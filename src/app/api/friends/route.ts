@@ -20,12 +20,19 @@ export async function POST(request: Request) {
   const lon = formData.get("lon");
   const id = formData.get("id");
 
-  if (!lat || !lon || !id) {
+  if (
+    typeof lat !== "string" ||
+    !lat ||
+    typeof lon !== "string" ||
+    !lon ||
+    typeof id !== "string" ||
+    !id
+  ) {
     return NextResponse.json({ error: "bad request" }, { status: 400 });
   }
 
   try {
-    await updateFriendLocation(id.toString(), Number(lat), Number(lon));
+    await updateFriendLocation(id, Number(lat), Number(lon));
 
     const friends = await getFriendsWithLocations();
     const otherFriends = friends.filter((friend) => friend.id !== id);
@@ -36,14 +43,14 @@ export async function POST(request: Request) {
       bearing: calculateBearing(
         currentLocation.latitude,
         currentLocation.longitude,
-        friend.latitude!,
-        friend.longitude!,
+        friend.latitude,
+        friend.longitude,
       ),
       distance: calculateDistance(
         currentLocation.latitude,
         currentLocation.longitude,
-        friend.latitude!,
-        friend.longitude!,
+        friend.latitude,
+        friend.longitude,
       ),
     }));
 
