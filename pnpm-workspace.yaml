@@ -3,3 +3,5 @@ allowBuilds:
   sqlite3: true
 minimumReleaseAgeExclude:
   - lucide-react@1.48.0 || 1.53.0
+  - '@aranlucas/*'
+  - '@oxlint/plugins@1.88.0'
