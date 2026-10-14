@@ -20,12 +20,14 @@ import {
 import { Button } from "./ui/button";
 import { buttonVariants } from "./ui/button-variants";
 import { User } from "lucide-react";
+import { useState } from "react";
 
 export function MainNav() {
   const { data: session, status } = useSession();
+  const [signOutFailed, setSignOutFailed] = useState(false);
 
   return (
-    <div className="mbs-2 flex w-full items-center justify-between">
+    <div className="relative mbs-2 flex w-full items-center justify-between">
       <NavigationMenu>
         <NavigationMenuList>
           <NavigationMenuItem>
@@ -63,7 +65,8 @@ export function MainNav() {
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => {
-                    void signOut().catch((error: unknown) => console.error(error));
+                    setSignOutFailed(false);
+                    void signOut().catch(() => setSignOutFailed(true));
                   }}
                 >
                   Sign out
@@ -81,6 +84,14 @@ export function MainNav() {
           </Link>
         )}
       </div>
+      {signOutFailed && (
+        <p
+          role="alert"
+          className="absolute inset-x-0 inset-bs-full z-50 rounded-md border bg-background p-2 text-sm text-destructive shadow-sm"
+        >
+          Unable to sign out. Please try again.
+        </p>
+      )}
     </div>
   );
 }

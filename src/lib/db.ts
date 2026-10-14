@@ -14,5 +14,6 @@ function createConnection(): Promise<Database> {
 
 export function getDb(): Promise<Database> {
   globalThis.dbPromise ??= createConnection();
+
   return globalThis.dbPromise;
 }

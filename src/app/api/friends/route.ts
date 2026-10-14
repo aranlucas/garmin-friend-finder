@@ -1,6 +1,16 @@
 import { NextResponse } from "next/server";
 import { calculateBearing, calculateDistance } from "@/lib/geo";
+import { reportServerError } from "@/lib/server-errors";
 import { getAllFriends, getFriendsWithLocations, updateFriendLocation } from "@/services/friends";
+import { z } from "zod";
+
+const coordinateSchema = z.string().trim().min(1).transform(Number).pipe(z.number());
+
+const locationSchema = z.object({
+  id: z.string().min(1),
+  lat: coordinateSchema.pipe(z.number().min(-90).max(90)),
+  lon: coordinateSchema.pipe(z.number().min(-180).max(180)),
+});
 
 export async function GET() {
   try {
@@ -8,35 +18,36 @@ export async function GET() {
 
     return NextResponse.json(friends);
   } catch (error) {
-    console.error("Database error:", error);
+    reportServerError(
+      "friends_failed",
+      error instanceof Error ? error : new Error("Non-error value thrown"),
+    );
 
     return NextResponse.json({ error: "database error" }, { status: 500 });
   }
 }
 
 export async function POST(request: Request) {
-  const formData = await request.formData();
-  const lat = formData.get("lat");
-  const lon = formData.get("lon");
-  const id = formData.get("id");
+  const formData = await request.formData().catch(() => null);
 
-  if (
-    typeof lat !== "string" ||
-    !lat ||
-    typeof lon !== "string" ||
-    !lon ||
-    typeof id !== "string" ||
-    !id
-  ) {
+  const location = locationSchema.safeParse({
+    id: formData?.get("id"),
+    lat: formData?.get("lat"),
+    lon: formData?.get("lon"),
+  });
+
+  if (!location.success) {
     return NextResponse.json({ error: "bad request" }, { status: 400 });
   }
 
+  const { id, lat, lon } = location.data;
+
   try {
-    await updateFriendLocation(id, Number(lat), Number(lon));
+    await updateFriendLocation(id, lat, lon);
 
     const friends = await getFriendsWithLocations();
     const otherFriends = friends.filter((friend) => friend.id !== id);
-    const currentLocation = { latitude: Number(lat), longitude: Number(lon) };
+    const currentLocation = { latitude: lat, longitude: lon };
 
     const friendsWithBearing = otherFriends.map((friend) => ({
       ...friend,
@@ -56,7 +67,10 @@ export async function POST(request: Request) {
 
     return NextResponse.json(friendsWithBearing);
   } catch (error) {
-    console.error("Database error:", error);
+    reportServerError(
+      "friends_failed",
+      error instanceof Error ? error : new Error("Non-error value thrown"),
+    );
 
     return NextResponse.json({ error: "database error" }, { status: 500 });
   }

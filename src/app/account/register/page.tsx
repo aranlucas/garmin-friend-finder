@@ -7,6 +7,8 @@ import { Input } from "@/components/ui/input";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState({
     code: "",
@@ -15,22 +17,32 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMessage("");
+    setIsSubmitting(true);
 
-    const response = await fetch("/api/account/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    });
+    try {
+      const response = await fetch("/api/account/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
 
-    if (response.ok) {
-      router.push("/");
+      if (response.ok) {
+        router.push("/");
+      } else {
+        setErrorMessage("Registration failed. Check your code and try again.");
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const onSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
-    handleSubmit(event).catch((error: unknown) => console.error(error));
+    void handleSubmit(event).catch(() => {
+      setErrorMessage("Unable to register. Check your connection and try again.");
+    });
   };
 
   return (
@@ -64,8 +76,9 @@ export default function RegisterPage() {
           />
         </div>
 
-        <Button type="submit" className="w-full">
-          Register
+        {errorMessage && <p role="alert">{errorMessage}</p>}
+        <Button type="submit" className="w-full" disabled={isSubmitting}>
+          {isSubmitting ? "Registering…" : "Register"}
         </Button>
       </form>
     </div>

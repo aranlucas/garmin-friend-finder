@@ -26,7 +26,9 @@ const FRIEND_ICON = icon({
 });
 
 function calculateBounds(friends: Friend[]): LatLngBounds | null {
-  if (friends.length === 0) return null;
+  if (friends.length === 0) {
+    return null;
+  }
 
   const coordinates = friends.map((friend): LatLngTuple => [friend.latitude, friend.longitude]);
 

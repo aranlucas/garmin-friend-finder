@@ -1,5 +1,7 @@
 import sqlite3 from "sqlite3";
 import { open } from "sqlite";
+import { stdout } from "node:process";
+import { reportServerError } from "../src/lib/server-errors";
 
 async function initializeDatabase() {
   try {
@@ -47,15 +49,19 @@ async function initializeDatabase() {
       );
 
       await db.run("COMMIT");
-      console.log("Sample data inserted successfully");
+      stdout.write("Sample data inserted successfully\n");
     } catch (error) {
       await db.run("ROLLBACK");
       throw error;
     }
 
-    console.log("Database initialized successfully");
+    stdout.write("Database initialized successfully\n");
   } catch (error) {
-    console.error("Error initializing database:", error);
+    reportServerError(
+      "database_initialization_failed",
+      error instanceof Error ? error : new Error("Non-error value thrown"),
+    );
+    process.exitCode = 1;
   }
 }
 

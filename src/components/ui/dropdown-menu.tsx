@@ -55,11 +55,15 @@ function DropdownMenuGroup({ ...props }: MenuPrimitive.Group.Props) {
 interface InsetProps {
   inset?: boolean;
 }
+
 interface DropdownItemProps extends MenuPrimitive.Item.Props, InsetProps {
   variant?: "default" | "destructive";
 }
+
 interface SubTriggerProps extends MenuPrimitive.SubmenuTrigger.Props, InsetProps {}
+
 interface CheckboxItemProps extends MenuPrimitive.CheckboxItem.Props, InsetProps {}
+
 interface RadioItemProps extends MenuPrimitive.RadioItem.Props, InsetProps {}
 
 function DropdownMenuLabel({
