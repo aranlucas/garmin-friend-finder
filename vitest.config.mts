@@ -20,8 +20,8 @@ export default defineConfig({
         test: {
           name: "browser",
           environment: "jsdom",
-          include: ["tests/ui/**/*.test.tsx"],
-          setupFiles: ["./vitest.setup.ts"],
+          include: ["test/ui/**/*.test.tsx"],
+          setupFiles: ["./test/setup.ts"],
           globals: false,
         },
       },
