@@ -1,9 +1,9 @@
 import sqlite3 from "sqlite3";
 import { type Database, open } from "sqlite";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { POST as register } from "../src/app/api/account/register/route";
-import { GET as getFriends, POST as updateLocation } from "../src/app/api/friends/route";
-import { calculateDistance } from "../src/lib/geo";
+import { POST as register } from "@/app/api/account/register/route";
+import { GET as getFriends, POST as updateLocation } from "@/app/api/friends/route";
+import { calculateDistance } from "@/lib/geo";
 
 let database: Database;
 

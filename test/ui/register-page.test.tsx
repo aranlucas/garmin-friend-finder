@@ -4,7 +4,7 @@ import {
 } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, expect, test, vi } from "vitest";
-import RegisterPage from "../../src/app/account/register/page";
+import RegisterPage from "@/app/account/register/page";
 
 afterEach(() => vi.restoreAllMocks());
 

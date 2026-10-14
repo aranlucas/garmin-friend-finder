@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { SessionProvider } from "next-auth/react";
 import { afterEach, expect, test, vi } from "vitest";
-import { MainNav } from "../../src/components/main-nav";
+import { MainNav } from "@/components/main-nav";
 
 afterEach(() => vi.restoreAllMocks());
 

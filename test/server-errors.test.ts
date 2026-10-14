@@ -1,5 +1,5 @@
 import { afterEach, expect, test, vi } from "vitest";
-import { reportServerError } from "../src/lib/server-errors";
+import { reportServerError } from "@/lib/server-errors";
 
 afterEach(() => vi.restoreAllMocks());
 
