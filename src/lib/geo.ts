@@ -29,7 +29,9 @@ export function calculateDistance(lat1: number, lon1: number, lat2: number, lon2
       Math.sin(dLon / 2) *
       Math.sin(dLon / 2);
 
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  // Roundoff at antipodal points can put the haversine just above one.
+  const haversine = Math.max(0, Math.min(1, a));
+  const c = 2 * Math.atan2(Math.sqrt(haversine), Math.sqrt(1 - haversine));
 
   return R * c; // Returns distance in feet
 }
