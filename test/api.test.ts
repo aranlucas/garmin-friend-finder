@@ -1,6 +1,7 @@
 import sqlite3 from "sqlite3";
 import { type Database, open } from "sqlite";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { z } from "zod";
 import { POST as register } from "@/app/api/account/register/route";
 import { GET as getFriends, POST as updateLocation } from "@/app/api/friends/route";
 import { calculateDistance } from "@/lib/geo";
@@ -178,6 +179,17 @@ describe("friend location boundary", () => {
     ["-12.5", "150.25"],
   ])("accepts finite coordinates %s / %s", async (lat, lon) => {
     expect((await updateLocation(locationRequest("current-user", lat, lon))).status).toBe(200);
+  });
+
+  test("returns a finite JSON distance for antipodal friends", async () => {
+    await database.run("UPDATE locations SET latitude = 58, longitude = 180");
+
+    const response = await updateLocation(locationRequest("current-user", "-58", "0"));
+    const friends = z.array(z.object({ distance: z.number() })).parse(await response.json());
+
+    expect(response.status).toBe(200);
+    expect(friends).toHaveLength(1);
+    expect(friends[0].distance).toBeCloseTo(Math.PI * 20902231, 3);
   });
 
   test("returns a sanitized error when a user does not exist", async () => {
