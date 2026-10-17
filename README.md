@@ -21,7 +21,7 @@ The project does not currently connect to Garmin Connect or sync directly from a
 
 ## Try it locally
 
-Requirements: Node.js 24 and pnpm 12.6.
+Requirements: Node.js 24, pnpm 12.6, and the SQLite 3 command-line tool (`sqlite3`).
 
 ```sh
 pnpm install
@@ -51,7 +51,7 @@ The SQLite file is friends.db in the project root. Do not use a production datab
 - src/services/friends.ts reads and updates SQLite friend and location records.
 - src/lib/geo.ts calculates distance and bearing.
 - src/components/FriendsMap.tsx renders friend markers with Leaflet.
-- scripts/init-db.ts creates the local schema and inserts a sample record.
+- db/schema.sql defines the local schema and transactional sample record. `pnpm run init-db` executes it with native `sqlite3 -bail`, stops on SQL errors, and returns a nonzero exit code; SQLite rolls back an unfinished seed transaction when the connection closes.
 
 Available checks:
 
