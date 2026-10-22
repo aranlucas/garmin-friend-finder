@@ -8,7 +8,6 @@
     "start": "next start",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
-    "init-db": "sqlite3 -bail friends.db \".read db/schema.sql\"",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "typecheck": "tsc --noEmit",

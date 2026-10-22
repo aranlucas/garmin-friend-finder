@@ -1,10 +1,11 @@
-import sqlite3 from "sqlite3";
-import { type Database, open } from "sqlite";
+import { type Database } from "sqlite";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { z } from "zod";
+import { POST as createVerificationCode } from "@/app/api/account/route";
 import { POST as register } from "@/app/api/account/register/route";
 import { GET as getFriends, POST as updateLocation } from "@/app/api/friends/route";
 import { calculateDistance } from "@/lib/geo";
+import { openDatabase } from "@/lib/db";
 
 let database: Database;
 
@@ -12,13 +13,10 @@ let previousPromise: Promise<Database> | undefined;
 
 beforeEach(async () => {
   previousPromise = globalThis.dbPromise;
-  database = await open({ filename: ":memory:", driver: sqlite3.Database });
+  database = await openDatabase(":memory:");
   globalThis.dbPromise = Promise.resolve(database);
   await database.exec(`
-    CREATE TABLE users (id TEXT PRIMARY KEY, short_name TEXT NOT NULL);
-    CREATE TABLE locations (user_id TEXT PRIMARY KEY, latitude REAL, longitude REAL);
-    CREATE TABLE verification_codes (code TEXT PRIMARY KEY, user_id TEXT NOT NULL);
-    INSERT INTO verification_codes VALUES ('valid-code', 'new-user');
+    INSERT INTO verification_codes (code, user_id) VALUES ('valid-code', 'new-user');
     INSERT INTO users VALUES ('current-user', 'Current'), ('other-user', 'Other');
     INSERT INTO locations VALUES ('other-user', 0, 1);
   `);
@@ -46,6 +44,29 @@ function locationRequest(id: string, lat: string, lon: string): Request {
 }
 
 describe("registration boundary", () => {
+  test("issues a code before its user exists and completes registration", async () => {
+    const issued = await createVerificationCode(
+      new Request("http://localhost/api/account", {
+        method: "POST",
+        body: new URLSearchParams({ id: "pending-user" }),
+      }),
+    );
+
+    const { code } = z.object({ code: z.string() }).parse(await issued.json());
+
+    expect(issued.status).toBe(201);
+    expect(await database.get("SELECT id FROM users WHERE id = 'pending-user'")).toBeUndefined();
+
+    const response = await register(
+      registrationRequest(JSON.stringify({ code, shortName: "Pending" })),
+    );
+
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual({ id: "pending-user", short_name: "Pending" });
+    expect(
+      await database.get("SELECT code FROM verification_codes WHERE code = ?", code),
+    ).toBeUndefined();
+  });
   test.each([
     "null",
     "[]",
