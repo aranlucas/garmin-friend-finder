@@ -53,7 +53,7 @@ Schema changes go in new numbered SQL files under db/migrations/. Keep previousl
 - src/app/ contains the landing page, authenticated dashboard, registration page, and API routes.
 - src/services/friends.ts reads and updates SQLite friend and location records.
 - src/lib/geo.ts calculates distance and bearing.
-- src/components/FriendsMap.tsx renders friend markers with Leaflet.
+- src/components/friends-map.tsx renders friend markers with Leaflet.
 - src/lib/db.ts opens the shared connection, enables foreign keys, and applies db/migrations/ before queries can run.
 - db/seed.sql contains optional development demo data.
 
@@ -63,5 +63,6 @@ Available checks:
 pnpm format:check
 pnpm lint
 pnpm typecheck
+pnpm test
 pnpm build
 ```
