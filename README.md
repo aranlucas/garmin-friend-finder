@@ -50,6 +50,9 @@ Schema changes go in new numbered SQL files under db/migrations/. Keep previousl
 
 ## Find your way around
 
+See [architecture, API contracts, registration atomicity, and test coverage](docs/architecture.md)
+for module responsibilities and current access-control limitations.
+
 - src/app/ contains the landing page, authenticated dashboard, registration page, and API routes.
 - src/services/friends.ts reads and updates SQLite friend and location records.
 - src/lib/geo.ts calculates distance and bearing.
