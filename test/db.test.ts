@@ -5,6 +5,7 @@ import sqlite3 from "sqlite3";
 import { Database, open } from "sqlite";
 import { afterEach, beforeEach, expect, test, vi } from "vitest";
 import { getDb } from "@/lib/db";
+import { registerAccount } from "@/services/accounts";
 
 let directory: string;
 
@@ -62,7 +63,11 @@ test("concurrent callers share a connection that is migrated before use, without
 
   expect(shared).toBe(db);
   expect(getDb()).toBe(first);
-  expect(await db.all("SELECT id FROM migrations ORDER BY id")).toEqual([{ id: 1 }, { id: 2 }]);
+  expect(await db.all("SELECT id FROM migrations ORDER BY id")).toEqual([
+    { id: 1 },
+    { id: 2 },
+    { id: 3 },
+  ]);
   expect(await db.all("SELECT * FROM users")).toEqual([]);
   expect(await db.all("SELECT * FROM locations")).toEqual([]);
   expect(await db.all("SELECT * FROM verification_codes")).toEqual([]);
@@ -168,6 +173,7 @@ test("migration failure rolls back changes, closes the connection, and allows re
   expect(await retried.all("SELECT id FROM migrations ORDER BY id")).toEqual([
     { id: 1 },
     { id: 2 },
+    { id: 3 },
   ]);
   expect(await retried.all("SELECT * FROM verification_codes")).toEqual([
     { code: "keep", user_id: "pending-user", created_at: null },
@@ -211,4 +217,21 @@ test("production ignores the demo seed setting", async () => {
   const db = await connect();
 
   expect(await db.all("SELECT * FROM users")).toEqual([]);
+});
+
+test("registration is atomic across independent connections to the same database", async () => {
+  const first = await connect();
+  const second = await rawConnection();
+  await first.run("INSERT INTO verification_codes (code, user_id) VALUES ('pending', 'new-user')");
+
+  const results = await Promise.all([
+    registerAccount(first, "pending", "First"),
+    registerAccount(second, "pending", "Second"),
+  ]);
+
+  const winners = results.filter((result) => result !== undefined);
+
+  expect(winners).toHaveLength(1);
+  expect(await first.all("SELECT id, short_name FROM users")).toEqual(winners);
+  expect(await second.all("SELECT * FROM verification_codes")).toEqual([]);
 });

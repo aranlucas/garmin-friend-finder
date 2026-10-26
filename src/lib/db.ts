@@ -7,6 +7,7 @@ declare global {
   var dbPromise: Promise<Database> | undefined;
 }
 
+/** Open and migrate a database before use; close failed initialization attempts. */
 export async function openDatabase(filename: string): Promise<Database> {
   const db = await open({
     filename,
@@ -28,6 +29,7 @@ export async function openDatabase(filename: string): Promise<Database> {
   }
 }
 
+/** Share initialized storage per process, allowing a later request to retry initialization failures. */
 export function getDb(): Promise<Database> {
   globalThis.dbPromise ??= openDatabase(process.env.DATABASE_PATH ?? "./friends.db").catch(
     (error) => {

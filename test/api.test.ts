@@ -101,8 +101,110 @@ describe("registration boundary", () => {
     expect(await repeated.json()).toEqual({ error: "Invalid verification code" });
   });
 
+  test("independent registrations can share the connection concurrently", async () => {
+    await database.run(
+      "INSERT INTO verification_codes (code, user_id) VALUES ('second-code', 'second-user')",
+    );
+
+    const responses = await Promise.all([
+      register(registrationRequest(JSON.stringify({ code: "valid-code", shortName: "First" }))),
+      register(registrationRequest(JSON.stringify({ code: "second-code", shortName: "Second" }))),
+    ]);
+
+    expect(responses.map((response) => response.status)).toEqual([200, 200]);
+    expect(await database.all("SELECT * FROM verification_codes")).toEqual([]);
+    expect(
+      await database.all(
+        "SELECT id, short_name FROM users WHERE id IN ('new-user', 'second-user') ORDER BY id",
+      ),
+    ).toEqual([
+      { id: "new-user", short_name: "First" },
+      { id: "second-user", short_name: "Second" },
+    ]);
+  });
+
+  test("a code can only win one concurrent registration", async () => {
+    const responses = await Promise.all([
+      register(registrationRequest(JSON.stringify({ code: "valid-code", shortName: "First" }))),
+      register(registrationRequest(JSON.stringify({ code: "valid-code", shortName: "Second" }))),
+    ]);
+
+    expect(
+      responses.map((response) => response.status).toSorted((left, right) => left - right),
+    ).toEqual([200, 404]);
+    expect(await database.all("SELECT * FROM verification_codes")).toEqual([]);
+    const winner = responses.find((response) => response.status === 200);
+    expect(winner).toBeDefined();
+    expect(await database.get("SELECT id, short_name FROM users WHERE id = 'new-user'")).toEqual(
+      await winner?.json(),
+    );
+  });
+
+  test("an invalid registration cannot roll back another request's successful location update", async () => {
+    const reachedLookup = Promise.withResolvers<void>();
+    const continueRegistration = Promise.withResolvers<void>();
+    const get = database.get.bind(database);
+
+    vi.spyOn(database, "get").mockImplementation(async (...args) => {
+      const result = await get<unknown>(...args);
+
+      if (z.string().parse(args[0]).includes("FROM verification_codes")) {
+        reachedLookup.resolve();
+        await continueRegistration.promise;
+      }
+
+      return result;
+    });
+
+    const response = register(
+      registrationRequest(JSON.stringify({ code: "missing-code", shortName: "Missing" })),
+    );
+
+    try {
+      await reachedLookup.promise;
+      expect((await updateLocation(locationRequest("current-user", "12", "34"))).status).toBe(200);
+    } finally {
+      continueRegistration.resolve();
+      await response;
+    }
+
+    expect((await response).status).toBe(404);
+    expect(await database.get("SELECT * FROM locations WHERE user_id = 'current-user'")).toEqual({
+      user_id: "current-user",
+      latitude: 12,
+      longitude: 34,
+    });
+  });
+
+  test("registering a user invalidates every pending code for that user", async () => {
+    await database.run(
+      "INSERT INTO verification_codes (code, user_id) VALUES ('second-code', 'new-user')",
+    );
+
+    const first = await register(
+      registrationRequest(JSON.stringify({ code: "valid-code", shortName: "First" })),
+    );
+
+    const second = await register(
+      registrationRequest(JSON.stringify({ code: "second-code", shortName: "Second" })),
+    );
+
+    expect(first.status).toBe(200);
+    expect(second.status).toBe(404);
+    expect(await database.all("SELECT * FROM verification_codes")).toEqual([]);
+    expect(await database.get("SELECT short_name FROM users WHERE id = 'new-user'")).toEqual({
+      short_name: "First",
+    });
+  });
+
   test("rolls back failed registration and emits a sanitized diagnostic", async () => {
-    await database.run("INSERT INTO users VALUES ('new-user', 'Existing')");
+    await database.exec(`
+      CREATE TRIGGER reject_registration BEFORE INSERT ON users
+      WHEN NEW.id = 'new-user'
+      BEGIN
+        SELECT RAISE(ABORT, 'Private database failure');
+      END;
+    `);
     const diagnostic = vi.spyOn(process.stderr, "write").mockReturnValue(true);
 
     const response = await register(
@@ -117,6 +219,41 @@ describe("registration boundary", () => {
     expect(diagnostic).toHaveBeenCalledWith(
       `${JSON.stringify({ level: "error", event: "registration_failed", error: "Error" })}\n`,
     );
+  });
+
+  test("a code-consumption failure rolls back the inserted user and allows retry", async () => {
+    await database.exec(`
+      CREATE TRIGGER reject_code_consumption BEFORE DELETE ON verification_codes
+      BEGIN
+        SELECT RAISE(ABORT, 'Private code-consumption failure');
+      END;
+    `);
+    vi.spyOn(process.stderr, "write").mockReturnValue(true);
+    const body = JSON.stringify({ code: "valid-code", shortName: "Pending" });
+
+    expect((await register(registrationRequest(body))).status).toBe(500);
+    expect(await database.get("SELECT id FROM users WHERE id = 'new-user'")).toBeUndefined();
+    expect(await database.get("SELECT code FROM verification_codes")).toEqual({
+      code: "valid-code",
+    });
+
+    await database.exec("DROP TRIGGER reject_code_consumption");
+    expect((await register(registrationRequest(body))).status).toBe(200);
+  });
+
+  test("a stale code cannot overwrite an existing account", async () => {
+    await database.run(
+      "INSERT INTO verification_codes (code, user_id) VALUES ('stale-code', 'current-user')",
+    );
+
+    const response = await register(
+      registrationRequest(JSON.stringify({ code: "stale-code", shortName: "Replacement" })),
+    );
+
+    expect(response.status).toBe(404);
+    expect(await database.get("SELECT short_name FROM users WHERE id = 'current-user'")).toEqual({
+      short_name: "Current",
+    });
   });
 });
 

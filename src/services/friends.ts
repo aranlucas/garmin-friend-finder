@@ -5,6 +5,7 @@ interface UserIdRow {
   id: string;
 }
 
+/** List all accounts; the SQL left join yields null coordinates for unlocated accounts. */
 export async function getAllFriends(): Promise<Friend[]> {
   const db = await getDb();
 
@@ -19,6 +20,7 @@ export async function getAllFriends(): Promise<Friend[]> {
   `);
 }
 
+/** List accounts with stored coordinates; storage failures propagate to the caller. */
 export async function getFriendsWithLocations(): Promise<Friend[]> {
   const db = await getDb();
 
@@ -33,6 +35,7 @@ export async function getFriendsWithLocations(): Promise<Friend[]> {
   `);
 }
 
+/** Upsert validated coordinates for an existing account; reject missing accounts or storage failures. */
 export async function updateFriendLocation(userId: string, latitude: number, longitude: number) {
   const db = await getDb();
   // First check if user exists
