@@ -4,13 +4,7 @@ Updated 2026-10-26. Proposed work; none of these milestones is a release claim.
 Digits and MCP products take portfolio priority. This prototype is not an
 emergency or rescue service.
 
-## Starting point and chosen access model
-
-Baseline: `ab681e050891e57d78e069ff11118ec4c1cb8ca4`. The
-[README](README.md) and [API/access limitations](docs/architecture.md) describe
-GitHub sign-in, a SQLite-backed map, submitted coordinates, distance and bearing.
-There is no Garmin device or Garmin Connect synchronization. Dashboard sign-in
-does not currently establish authorization for every location API.
+## Chosen access model
 
 The owner selected **only explicitly invited friends/groups**. Signing in alone
 must not expose another person's position. Complete that boundary before a pilot
