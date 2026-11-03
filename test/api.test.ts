@@ -4,7 +4,6 @@ import { z } from "zod";
 import { POST as createVerificationCode } from "@/app/api/account/route";
 import { POST as register } from "@/app/api/account/register/route";
 import { GET as getFriends, POST as updateLocation } from "@/app/api/friends/route";
-import { calculateDistance } from "@/lib/geo";
 import { openDatabase } from "@/lib/db";
 
 let database: Database;
@@ -318,16 +317,22 @@ describe("friend location boundary", () => {
       latitude: 0,
       longitude: 0,
     });
-    expect(await response.json()).toEqual([
-      {
-        id: "other-user",
-        short_name: "Other",
-        latitude: 0,
-        longitude: 1,
-        bearing: 90,
-        distance: calculateDistance(0, 0, 0, 1),
-      },
-    ]);
+
+    const friends = z
+      .array(z.object({ distance: z.number() }).passthrough())
+      .parse(await response.json());
+
+    expect(friends).toHaveLength(1);
+    const { distance, ...friend } = friends[0];
+
+    expect(distance).toBeCloseTo((Math.PI * 20902231) / 180, 3);
+    expect(friend).toEqual({
+      id: "other-user",
+      short_name: "Other",
+      latitude: 0,
+      longitude: 1,
+      bearing: 90,
+    });
     expect((await getFriends()).status).toBe(200);
   });
 
