@@ -1,12 +1,11 @@
 export interface Friend {
   id: string;
   short_name: string;
-  latitude: number;
-  longitude: number;
+  latitude: number | null;
+  longitude: number | null;
 }
 
-export interface FriendBearingInfo {
-  id: string;
-  short_name: string;
-  bearing: number;
+export interface LocatedFriend extends Friend {
+  latitude: number;
+  longitude: number;
 }

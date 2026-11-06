@@ -4,8 +4,7 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import type { LatLngBounds, LatLngTuple } from "leaflet";
 import { icon, latLngBounds } from "leaflet";
-import type { Friend } from "@/types";
-import { ErrorBoundary } from "react-error-boundary";
+import type { LocatedFriend } from "@/types";
 
 const MAP_CONFIG = {
   SEATTLE: {
@@ -25,7 +24,7 @@ const FRIEND_ICON = icon({
   popupAnchor: [1, -34],
 });
 
-function calculateBounds(friends: Friend[]): LatLngBounds | null {
+function calculateBounds(friends: LocatedFriend[]): LatLngBounds | null {
   if (friends.length === 0) {
     return null;
   }
@@ -35,36 +34,26 @@ function calculateBounds(friends: Friend[]): LatLngBounds | null {
   return latLngBounds(coordinates).pad(MAP_CONFIG.BOUNDS_PADDING);
 }
 
-function FallbackComponent() {
-  return (
-    <div className="flex size-full items-center justify-center rounded-lg bg-gray-100 text-gray-600">
-      Error loading map
-    </div>
-  );
-}
-
 interface FriendsMapProps {
-  friends: Friend[];
+  friends: LocatedFriend[];
 }
 
 export default function FriendsMap({ friends }: Readonly<FriendsMapProps>) {
   const bounds = calculateBounds(friends);
 
   return (
-    <ErrorBoundary FallbackComponent={FallbackComponent}>
-      <MapContainer
-        bounds={bounds ?? undefined}
-        zoom={bounds ? undefined : MAP_CONFIG.SEATTLE.zoom}
-        center={bounds ? undefined : MAP_CONFIG.SEATTLE.position}
-        className="z-0 size-full rounded-lg"
-      >
-        <TileLayer attribution={MAP_CONFIG.ATTRIBUTION} url={MAP_CONFIG.TILE_URL} />
-        {friends.map((friend) => (
-          <Marker key={friend.id} position={[friend.latitude, friend.longitude]} icon={FRIEND_ICON}>
-            <Popup className="text-sm font-medium">{friend.short_name}</Popup>
-          </Marker>
-        ))}
-      </MapContainer>
-    </ErrorBoundary>
+    <MapContainer
+      bounds={bounds ?? undefined}
+      zoom={bounds ? undefined : MAP_CONFIG.SEATTLE.zoom}
+      center={bounds ? undefined : MAP_CONFIG.SEATTLE.position}
+      className="z-0 size-full rounded-lg"
+    >
+      <TileLayer attribution={MAP_CONFIG.ATTRIBUTION} url={MAP_CONFIG.TILE_URL} />
+      {friends.map((friend) => (
+        <Marker key={friend.id} position={[friend.latitude, friend.longitude]} icon={FRIEND_ICON}>
+          <Popup className="text-sm font-medium">{friend.short_name}</Popup>
+        </Marker>
+      ))}
+    </MapContainer>
   );
 }

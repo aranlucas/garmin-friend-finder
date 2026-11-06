@@ -31,15 +31,14 @@ jobs:
           cache: true
           require-lockfile: true
 
-      - parallel:
-          - name: Lint
-            run: pnpm run format:check && pnpm run lint
+      - name: Lint
+        run: pnpm run format:check && pnpm run lint
 
-          - name: Typecheck
-            run: pnpm run typecheck
+      - name: Typecheck
+        run: pnpm run typecheck
 
-          - name: Test
-            run: pnpm test
+      - name: Test
+        run: pnpm test
 
-          - name: Build
-            run: pnpm run build
+      - name: Build
+        run: pnpm run build

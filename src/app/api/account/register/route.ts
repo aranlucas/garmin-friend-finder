@@ -9,7 +9,6 @@ const registrationSchema = z.object({
   shortName: z.string(),
 });
 
-/** Validate registration JSON and translate the atomic account result to the HTTP contract. */
 export async function POST(request: Request) {
   try {
     const body: unknown = await request.json().catch(() => null);
