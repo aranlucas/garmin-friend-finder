@@ -6,7 +6,7 @@ import { z } from "zod";
 
 const registrationSchema = z.object({
   code: z.string(),
-  shortName: z.string(),
+  shortName: z.string().refine((name) => name.trim().length > 0),
 });
 
 export async function POST(request: Request) {
