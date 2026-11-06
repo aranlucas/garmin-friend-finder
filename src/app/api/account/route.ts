@@ -1,52 +1,23 @@
+import { z } from "zod";
 import { getDb } from "@/lib/db";
+import { findAccount, issueVerificationCode } from "@/services/accounts";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
-interface UserIdRow {
-  id: string;
-}
-
-interface AccountRow {
-  id: string;
-  short_name: string;
-}
-
-function generateCode(): string {
-  return Math.floor(100000 + Math.random() * 900000).toString();
-}
-
 export async function GET(request: NextRequest) {
-  // get user id from NEXT query params
-  const searchParams = request.nextUrl.searchParams;
-  const userId = searchParams.get("id");
+  const user = await findAccount(await getDb(), request.nextUrl.searchParams.get("id"));
 
-  // Check if user exists
-  const db = await getDb();
-  const user = await db.get<AccountRow>("SELECT id, short_name FROM users WHERE id = ?", [userId]);
-
-  if (user?.short_name) {
-    return NextResponse.json({}, { status: 200 });
-  }
-
-  return new Response(null, {
-    status: 204,
-  });
+  return user?.short_name
+    ? NextResponse.json({}, { status: 200 })
+    : new Response(null, { status: 204 });
 }
 
 export async function POST(request: Request) {
   const formData = await request.formData();
-  const userId = formData.get("id");
-  const db = await getDb();
-  // Check if user exists
-  const user = await db.get<UserIdRow>("SELECT id FROM users WHERE id = ?", [userId]);
+  const id = z.string().nullable().parse(formData.get("id"));
+  const code = await issueVerificationCode(await getDb(), id);
 
-  if (user) {
-    return NextResponse.json({}, { status: 200 });
-  }
-
-  // Generate and store new code
-  const code = generateCode();
-  await db.run("INSERT INTO verification_codes (code, user_id) VALUES (?, ?)", [code, userId]);
-
-  return NextResponse.json({ code }, { status: 201 });
+  return code === undefined
+    ? NextResponse.json({}, { status: 200 })
+    : NextResponse.json({ code }, { status: 201 });
 }

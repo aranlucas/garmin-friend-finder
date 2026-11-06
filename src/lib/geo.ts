@@ -1,4 +1,3 @@
-/** Return the initial bearing in degrees [0, 360) for validated latitude/longitude pairs. */
 export function calculateBearing(lat1: number, lon1: number, lat2: number, lon2: number): number {
   const startLat = (lat1 * Math.PI) / 180;
   const startLng = (lon1 * Math.PI) / 180;
@@ -18,7 +17,6 @@ export function calculateBearing(lat1: number, lon1: number, lat2: number, lon2:
   return bearing;
 }
 
-/** Return great-circle distance in feet; inputs are validated coordinates in degrees. */
 export function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
   const R = 20902231; // Earth's radius in feet (6371 km * 3280.84 feet/km)
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
@@ -35,5 +33,5 @@ export function calculateDistance(lat1: number, lon1: number, lat2: number, lon2
   const haversine = Math.max(0, Math.min(1, a));
   const c = 2 * Math.atan2(Math.sqrt(haversine), Math.sqrt(1 - haversine));
 
-  return R * c; // Returns distance in feet
+  return R * c;
 }

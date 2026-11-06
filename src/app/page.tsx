@@ -4,7 +4,6 @@ export default function Home() {
   return (
     <main className="relative min-h-screen bg-linear-to-b from-background via-background to-secondary/20">
       <div className="relative z-10 container mx-auto px-4 py-16">
-        {/* Hero Section */}
         <div className="mbe-24 flex flex-col items-center text-center">
           <h1 className="mbe-6 text-5xl font-bold md:text-6xl">Mountain Safety Together</h1>
           <p className="mbe-8 max-w-2xl text-xl text-muted-foreground drop-shadow-sm md:text-2xl">
@@ -16,7 +15,6 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Features Grid */}
         <div className="mbe-24 grid gap-8 md:grid-cols-3">
           <div className="rounded-lg border bg-card/80 p-6 shadow-lg backdrop-blur-sm transition-shadow hover:shadow-xl">
             <h3 className="mbe-3 text-xl font-semibold">Real-Time Tracking</h3>
@@ -41,7 +39,6 @@ export default function Home() {
           </div>
         </div>
 
-        {/* How It Works */}
         <div className="mbe-16 text-center">
           <h2 className="mbe-8 text-3xl font-bold">How It Works</h2>
           <div className="grid gap-8 md:grid-cols-3">

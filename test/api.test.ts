@@ -1,7 +1,8 @@
 import { type Database } from "sqlite";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { z } from "zod";
-import { POST as createVerificationCode } from "@/app/api/account/route";
+import { NextRequest } from "next/server";
+import { GET as accountStatus, POST as createVerificationCode } from "@/app/api/account/route";
 import { POST as register } from "@/app/api/account/register/route";
 import { GET as getFriends, POST as updateLocation } from "@/app/api/friends/route";
 import { openDatabase } from "@/lib/db";
@@ -143,11 +144,13 @@ describe("registration boundary", () => {
     const reachedLookup = Promise.withResolvers<void>();
     const continueRegistration = Promise.withResolvers<void>();
     const get = database.get.bind(database);
+    let paused = false;
 
     vi.spyOn(database, "get").mockImplementation(async (...args) => {
       const result = await get<unknown>(...args);
 
-      if (z.string().parse(args[0]).includes("FROM verification_codes")) {
+      if (!paused) {
+        paused = true;
         reachedLookup.resolve();
         await continueRegistration.promise;
       }
@@ -365,4 +368,44 @@ describe("friend location boundary", () => {
       `${JSON.stringify({ level: "error", event: "friends_failed", error: "Error" })}\n`,
     );
   });
+});
+
+test("account status distinguishes absent accounts and code issuance preserves registered names", async () => {
+  expect(
+    (await accountStatus(new NextRequest("http://localhost/api/account?id=current-user"))).status,
+  ).toBe(200);
+  expect(
+    (await accountStatus(new NextRequest("http://localhost/api/account?id=missing"))).status,
+  ).toBe(204);
+
+  const response = await createVerificationCode(
+    new Request("http://localhost/api/account", {
+      method: "POST",
+      body: new URLSearchParams({ id: "current-user" }),
+    }),
+  );
+
+  expect(response.status).toBe(200);
+  expect(await response.json()).toEqual({});
+  expect(await database.get("SELECT short_name FROM users WHERE id = 'current-user'")).toEqual({
+    short_name: "Current",
+  });
+  expect(
+    await database.all("SELECT code FROM verification_codes WHERE user_id = 'current-user'"),
+  ).toEqual([]);
+});
+
+test("listings retain unlocated accounts and repeated updates replace coordinates", async () => {
+  const initial = await getFriends();
+  expect(await initial.json()).toEqual(
+    expect.arrayContaining([
+      { id: "current-user", short_name: "Current", latitude: null, longitude: null },
+      { id: "other-user", short_name: "Other", latitude: 0, longitude: 1 },
+    ]),
+  );
+  expect((await updateLocation(locationRequest("current-user", "12", "34"))).status).toBe(200);
+  expect((await updateLocation(locationRequest("current-user", "0", "0"))).status).toBe(200);
+  expect(await database.all("SELECT * FROM locations WHERE user_id = 'current-user'")).toEqual([
+    { user_id: "current-user", latitude: 0, longitude: 0 },
+  ]);
 });

@@ -31,14 +31,14 @@ export function MainNav() {
       <NavigationMenu>
         <NavigationMenuList>
           <NavigationMenuItem>
-            <NavigationMenuLink render={<Link href="/" />} className={navigationMenuTriggerStyle()}>
+            <NavigationMenuLink render={<Link href="/" />} className={navigationMenuTriggerStyle}>
               Home
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
             <NavigationMenuLink
               render={<Link href="/dashboard" />}
-              className={navigationMenuTriggerStyle()}
+              className={navigationMenuTriggerStyle}
             >
               Dashboard
             </NavigationMenuLink>

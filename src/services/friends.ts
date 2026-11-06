@@ -1,11 +1,6 @@
 import { getDb } from "@/lib/db";
-import type { Friend } from "@/types";
+import type { Friend, LocatedFriend } from "@/types";
 
-interface UserIdRow {
-  id: string;
-}
-
-/** List all accounts; the SQL left join yields null coordinates for unlocated accounts. */
 export async function getAllFriends(): Promise<Friend[]> {
   const db = await getDb();
 
@@ -20,11 +15,10 @@ export async function getAllFriends(): Promise<Friend[]> {
   `);
 }
 
-/** List accounts with stored coordinates; storage failures propagate to the caller. */
-export async function getFriendsWithLocations(): Promise<Friend[]> {
+export async function getFriendsWithLocations(): Promise<LocatedFriend[]> {
   const db = await getDb();
 
-  return db.all<Friend[]>(`
+  return db.all<LocatedFriend[]>(`
     SELECT 
       u.id,
       u.short_name,
@@ -35,19 +29,13 @@ export async function getFriendsWithLocations(): Promise<Friend[]> {
   `);
 }
 
-/** Upsert validated coordinates for an existing account; reject missing accounts or storage failures. */
 export async function updateFriendLocation(userId: string, latitude: number, longitude: number) {
   const db = await getDb();
-  // First check if user exists
-  const user = await db.get<UserIdRow>("SELECT id FROM users WHERE id = ?", [userId]);
-
-  if (!user) {
-    throw new Error(`User with ID ${userId} not found`);
-  }
 
   return db.run(
-    `INSERT OR REPLACE INTO locations (user_id, latitude, longitude) 
-     VALUES (?, ?, ?)`,
+    `INSERT INTO locations (user_id, latitude, longitude)
+     VALUES (?, ?, ?)
+     ON CONFLICT(user_id) DO UPDATE SET latitude = excluded.latitude, longitude = excluded.longitude`,
     [userId, latitude, longitude],
   );
 }
