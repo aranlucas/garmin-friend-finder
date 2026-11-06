@@ -7,10 +7,20 @@ import { POST as register } from "@/app/api/account/register/route";
 import { openDatabase } from "@/lib/db";
 import { issueVerificationCode } from "@/services/accounts";
 
+// Wrap only the randomness boundary; keep SQLite and the account protocol real.
+// Native ESM exports cannot be redefined with spyOn.
+// oxlint-disable-next-line anti-slop/no-module-mocking -- Force rare collisions at the native RNG boundary without changing the public service API.
+vi.mock("node:crypto", async (importOriginal) => {
+  const original = await importOriginal<typeof crypto>();
+
+  return { ...original, randomInt: vi.fn(original.randomInt) };
+});
+
 let database: Database;
 let previousPromise: Promise<Database> | undefined;
 
 beforeEach(async () => {
+  vi.mocked(crypto.randomInt).mockReset();
   previousPromise = globalThis.dbPromise;
   database = await openDatabase(":memory:");
   globalThis.dbPromise = Promise.resolve(database);
@@ -89,7 +99,7 @@ test("account storage failures return generic errors and sanitized diagnostics",
 test("code collisions retry without consuming or replacing existing codes", async () => {
   await database.run("INSERT INTO verification_codes (code, user_id) VALUES ('123456', 'first')");
   vi.spyOn(Math, "random").mockReturnValue((123456 - 100000) / 900000);
-  vi.spyOn(crypto, "randomInt")
+  vi.mocked(crypto.randomInt)
     .mockImplementationOnce(() => 123456)
     .mockImplementationOnce(() => 654321);
   expect(await issueVerificationCode(database, "second")).toBe("654321");
@@ -101,7 +111,7 @@ test("code collisions retry without consuming or replacing existing codes", asyn
 
 test("persistent code collisions terminate without altering pending codes", async () => {
   await database.run("INSERT INTO verification_codes (code, user_id) VALUES ('123456', 'first')");
-  const random = vi.spyOn(crypto, "randomInt").mockImplementation(() => 123456);
+  const random = vi.mocked(crypto.randomInt).mockImplementation(() => 123456);
   await expect(issueVerificationCode(database, "second")).rejects.toThrow(
     "Verification code allocation exhausted",
   );
