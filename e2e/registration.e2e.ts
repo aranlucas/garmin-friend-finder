@@ -8,6 +8,11 @@ test("device registration recovers from a wrong code and persists a usable accou
   screen,
   browser,
 }) => {
+  const session = await fetch(`${app.baseUrl}/api/auth/session`);
+
+  expect(session.status).toBe(200);
+  expect(await session.json()).toBeNull();
+
   const id = `ci-${randomUUID()}`;
 
   const issued = await fetch(`${app.baseUrl}/api/account`, {
@@ -22,7 +27,11 @@ test("device registration recovers from a wrong code and persists a usable accou
   await screen.getByLabel("Code", { exact: true }).fill("invalid-code");
   await screen.getByLabel("Short Name").fill("CI Trail Friend");
   await screen.getByRole("button", { name: "Register", exact: true }).tap();
-  await expect(screen.getByRole("alert")).toContainText("Registration failed");
+  await expect(
+    screen
+      .getByRole("alert")
+      .filter({ hasText: "Registration failed. Check your code and try again." }),
+  ).toContainText("Registration failed. Check your code and try again.");
   expect((await fetch(`${app.baseUrl}/api/account?id=${id}`)).status).toBe(204);
 
   await screen.getByLabel("Code", { exact: true }).fill(code);

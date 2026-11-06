@@ -12,6 +12,7 @@ export default {
           executable: "pnpm",
           args: ["exec", "next", "start", "--hostname", "127.0.0.1"],
           log: ".e2e/logs/app.log",
+          inheritEnv: ["DATABASE_PATH", "AUTH_SECRET", "AUTH_TRUST_HOST"],
         },
       },
     },
