@@ -38,3 +38,6 @@ next-env.d.ts
 # local database
 *.db
 friends.db
+
+# e2e reports and browser artifacts
+/.e2e/
